@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Final_Project</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_mouse">MouseActivity</string>
+    <string name="Mouse_Explain_Message">&quot;Please move only one finger for mouse,More than one finger is reserved &quot;</string>
+
+</resources>

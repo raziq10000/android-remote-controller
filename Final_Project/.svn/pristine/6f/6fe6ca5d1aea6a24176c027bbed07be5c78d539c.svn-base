@@ -1,0 +1,156 @@
+package com.example.final_project;
+
+import java.util.List;
+
+import android.app.Activity;
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.view.Menu;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+
+public class MainActivity extends Activity implements SensorEventListener {
+
+	  Client cl ;
+	private SensorManager mSensorManager;
+	private List<Sensor> sensors;
+	 private SensorManager sensorMgr;
+	    private long lastUpdate = -1;
+	    private float x, y, z;
+	    private float last_x, last_y, last_z;
+	    private static final int SHAKE_THRESHOLD = 800;
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // thread policy for Android 4.0 don't give permission main thread run 
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy); 
+        setContentView(R.layout.activity_main);
+        
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensors    =    mSensorManager.getSensorList(Sensor.TYPE_ALL);
+
+        
+        
+        final EditText et = (EditText)findViewById(R.id.editText1);
+        final EditText et3 = (EditText)findViewById(R.id.editText2);
+        Button bt =(Button)findViewById(R.id.button1);
+        bt.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				 try {
+					    cl= new Client(et.getText().toString());
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						et3.setText(e.toString());
+					}
+			}
+		});
+        final EditText et2 = (EditText)findViewById(R.id.editText2);
+        bt =(Button)findViewById(R.id.button2);
+        bt.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				 try {
+					    cl.sendMessage(et2.getText().toString());
+					    et2.getEditableText().clear();
+					    
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
+		});
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+    
+    protected void onResume() {
+        super.onResume();
+      for (Sensor s : sensors) 
+		      mSensorManager.registerListener(this, s, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    protected void onPause() {
+        super.onPause();
+        mSensorManager.unregisterListener(this);
+    }
+
+	@Override
+	public void onAccuracyChanged(Sensor arg0, int arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+     if (cl != null ){
+		switch (event.sensor.getType()) {
+	     	case Sensor.TYPE_ROTATION_VECTOR:
+	     		rotation(event.values);
+		     	break;
+	     	case Sensor.TYPE_ACCELEROMETER:
+	     	     shake(event.values);
+	     	   break;
+		default:
+			break;
+		}
+	 
+
+    //	 cl.sendMessage(analogValuesToString(event.sensor.getName(),event.sensor.getType(), event.values));
+     }
+	}
+	
+	private void rotation(float[] values) {
+		cl.sendMessage("x :" +values[0] + ", y :" + values[1] + ", z :" + values[2] );
+	}
+
+	public String analogValuesToString(String name,int type ,float [] values){
+		String s = "Sensor "+ name + " type " + type+ " " + "values:";
+		for (float f : values) 
+			s += f;
+		return  s;
+	}
+	
+	public void shake(float [] values){
+		
+		    long curTime = System.currentTimeMillis();
+		    // only allow one update every 100ms.
+		    if ((curTime - lastUpdate) > 100) {
+			long diffTime = (curTime - lastUpdate);
+			lastUpdate = curTime;
+	 
+			x = values[SensorManager.DATA_X];
+			y = values[SensorManager.DATA_Y];
+			z = values[SensorManager.DATA_Z];
+	 
+
+			float speed = Math.abs(x+y+z - last_x - last_y - last_z)
+	                              / diffTime * 10000;
+			if (speed > SHAKE_THRESHOLD) {
+			    cl.sendMessage("Shake " );
+			}
+			last_x = x; 
+			last_y = y;
+			last_z = z;
+		    
+		    }
+	}
+	
+	
+	
+	
+	
+}
