@@ -62,6 +62,7 @@ public class WifiConnection{
 		output = socket.getOutputStream();	
 		out = new PrintWriter(new BufferedWriter(
 			    new OutputStreamWriter(output)), true);		
+		new Thread(new ConnControl()).start();
 		
 	}
 	
@@ -211,6 +212,31 @@ public class WifiConnection{
 		
 	}*/
 
+	private class ConnControl implements Runnable{
+
+		String input = "";
+		
+		@Override
+		public void run() {
+			try {
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				
+				while(input != null){ 
+					input = in.readLine();
+				}
+				
+				socket.close();
+				MainActivity.isConnected = false;
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		} 
+		
+	}
 	
 
 }

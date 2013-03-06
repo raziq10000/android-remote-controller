@@ -1,5 +1,5 @@
 package com.example.sensorListerners;
-
+/*
 import com.example.final_project.Client;
 
 import android.hardware.Sensor;
@@ -75,3 +75,4 @@ public class GyroscopeListener  implements SensorEventListener{
 	
 
 }
+*/

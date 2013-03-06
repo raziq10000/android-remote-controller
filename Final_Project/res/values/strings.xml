@@ -7,5 +7,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_mouse">MouseActivity</string>
     <string name="Mouse_Explain_Message">&quot;Please move only one finger for mouse,More than one finger is reserved &quot;</string>
+    <string name="title_activity_dashboard">Dashboard</string>
+    <string name="action_settings">Settings</string>
 
 </resources>

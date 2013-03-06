@@ -17,6 +17,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MouseActivity extends Activity implements OnTouchListener{
 
@@ -29,15 +30,21 @@ public class MouseActivity extends Activity implements OnTouchListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mouse);
-        addr = WifiConnection.getInstance().socket.getInetAddress();
-        try {
-			socket = new DatagramSocket(7880);
-		} catch (SocketException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+        
+        if(MainActivity.isConnected){
+        	addr = WifiConnection.getInstance().socket.getInetAddress();
+            try {
+    			socket = new DatagramSocket(7880);
+    		} catch (SocketException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+            View v = findViewById(R.id.textView1);
+            v.setOnTouchListener(this);
+            
+        }else {
+        	Toast.makeText(this, "Not connected..", 0).show();
 		}
-        View v = findViewById(R.id.textView1);
-        v.setOnTouchListener(this);
         
        // Intent intent = getIntent();
        
@@ -59,10 +66,6 @@ public class MouseActivity extends Activity implements OnTouchListener{
 
 	public boolean onTouch(View v, MotionEvent event) {
 		long curTime = event.getEventTime();
-	
-
-		
-		
 		
 		
 		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN && event.getPointerCount() == 2){

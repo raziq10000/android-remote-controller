@@ -15,6 +15,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
@@ -33,15 +34,12 @@ public class MainActivity extends Activity implements SensorEventListener {
 	private List<Sensor> sensors;
 	private EditText et3;
 	private static WifiConnection wifiConnection = WifiConnection.getInstance();
-	boolean isConnected = false;
+	static boolean isConnected = false;
 	private SensorEventListener listener;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-				.permitAll().build();
-		StrictMode.setThreadPolicy(policy);
 
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		sensors = sensorManager.getSensorList(Sensor.TYPE_ALL);
@@ -50,6 +48,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 		final EditText et = (EditText) findViewById(R.id.editText1);
 		et3 = (EditText) findViewById(R.id.editText3);
 		Button bt = (Button) findViewById(R.id.button1);
+		
 		bt.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -57,9 +56,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 					if (checkInternetConnection()) {
 
 						if (isConnected == false) {
-							wifiConnection.connect(et.getText().toString());
+							new ConnAsyncTask().execute(et.getText().toString());
 							isConnected = true;
-                            listener = new SensorOrientationListener();
+							finish();
+                           /* listener = new SensorOrientationListener();
 							for (Sensor sensor : sensors) {
 								if (sensor.getType() == Sensor.TYPE_ACCELEROMETER
 										|| sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD
@@ -68,10 +68,10 @@ public class MainActivity extends Activity implements SensorEventListener {
 									sensorManager.registerListener(listener,
 											sensor,
 											SensorManager.SENSOR_DELAY_NORMAL);
-							}
+							}*/
 
 						} else
-							et3.setText("you are connected");
+							et3.setText("You are connected");
 
 					}
 				} catch (Exception e) {
@@ -100,17 +100,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 			}
 		});
 
-		TextView tv1 = (TextView) findViewById(R.id.textView1);
-		tv1.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				if (isConnected) {
-					Intent intent = new Intent(MainActivity.this,
-							MouseActivity.class);
-					startActivity(intent);
-				}
-			}
-		});
 
 		Button scan = (Button) findViewById(R.id.scan);
 		scan.setOnClickListener(new OnClickListener() {
@@ -146,14 +135,14 @@ public class MainActivity extends Activity implements SensorEventListener {
 		// sensorManager.registerListener(this, s,
 		// SensorManager.SENSOR_DELAY_NORMAL);
 
-		for (Sensor sensor : sensors) {
+	/*	for (Sensor sensor : sensors) {
 			if (sensor.getType() == Sensor.TYPE_ACCELEROMETER
 					|| sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD
 					|| sensor.getType() == Sensor.TYPE_GYROSCOPE
 					||   sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION)
 				sensorManager.registerListener(listener, sensor,
 						SensorManager.SENSOR_DELAY_NORMAL);
-		}
+		}*/
 
 	}
 
@@ -207,15 +196,22 @@ public class MainActivity extends Activity implements SensorEventListener {
 		}
 	}
 
-	/*
-	 * public static WifiConnection getClient() { return client; }
-	 */
+	private class ConnAsyncTask extends AsyncTask<String, Void, Void>{
 
-	// public Boolean rotation(float [] values){
-	// String msg;
-	//
-	//
-	//
-	// cl.sendMessage(msg);
-	// }
+		@Override
+		protected Void doInBackground(String... arg0) {
+			
+			try {
+				wifiConnection.connect(arg0[0]);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return null;
+		}
+	    
+		
+	}
+	
 }
