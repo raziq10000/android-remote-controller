@@ -36,7 +36,7 @@ public class WifiConnection extends Connection {
 			socket = new Socket(ia, connectionPort);
 			intiliazeStreams();
 			conControlRun();
-			connectionType = WIFI_CONNECTÝON;
+			connectionType = WIFI_CONNECTION;
 		}
 
 		@Override
@@ -142,6 +142,10 @@ public class WifiConnection extends Connection {
 					.getSystemService(Context.WIFI_SERVICE);
 		}
 		
+		public WifiManager getwManager() {
+			return wManager;
+		}
+
 		public List<InetAddress> getNetworkofNodes() {
 			return networkofNodes;
 		}

@@ -32,7 +32,7 @@ public class BluetoothConnection extends Connection {
 			socket = device.createRfcommSocketToServiceRecord(connectUuid);
 			socket.connect();
 			conControlRun();
-			connectionType = BLUETOOTH_CONNECTÝON;
+			connectionType = BLUETOOTH_CONNECTION;
 		}
 
 		@Override
@@ -59,7 +59,7 @@ public class BluetoothConnection extends Connection {
 		public boolean serverConfirm(String server) {
 			return serverConfirm(bluetoothAdapter.getRemoteDevice(server));
 		}
-
+        
 		public boolean serverConfirm(BluetoothDevice server) {
 			final AtomicBoolean isServer = new AtomicBoolean(false);
 			try {

@@ -74,7 +74,7 @@ public class MouseActivity extends Activity implements OnTouchListener{
 		long curTime = event.getEventTime();
 		
 		
-		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN && event.getPointerCount() == 2){
+		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && event.getPointerCount() == 2){
 			
 			try {
 				socket.send(new DatagramPacket("MOUSE/RIGHT_CLICK/".getBytes(),"MOUSE/RIGHT_CLICK/".length(), addr,7880));
@@ -94,7 +94,7 @@ public class MouseActivity extends Activity implements OnTouchListener{
 				downY = lastY = (int)event.getY();
 				return true;
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
-				
+
 				if (Math.abs((int)event.getX() - downX) < 2
 						&& Math.abs((int)event.getY() - downY) < 2 ){
 					
@@ -110,7 +110,10 @@ public class MouseActivity extends Activity implements OnTouchListener{
 				return false;
 			} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 	
-				
+				if (event.getAction() == MotionEvent.ACTION_MOVE && event.getPointerCount() == 2) {
+					TextView a = (TextView)findViewById(R.id.textView1);
+					a.append("scroll " + event.getY() + "\n");
+				}else{
 					lastUpdate = curTime;
 					x = (int)event.getX();
 					y = (int)event.getY();
@@ -124,12 +127,25 @@ public class MouseActivity extends Activity implements OnTouchListener{
 					
 					lastX = x;
 					lastY = y;
-				
+				}
 					return true;
 			}
+		
 			
 		
 		return false;
 	}
+
+	
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		
+		if(socket != null)
+			socket.close();
+	}
+	
+	
 	
 }
