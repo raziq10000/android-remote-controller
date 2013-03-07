@@ -65,4 +65,20 @@ public class Dashboard extends Activity {
 		return true;
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		try {
+			WifiConnection.getInstance().close();
+			MainActivity.isConnected = false;
+			finish();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	
+
 }
