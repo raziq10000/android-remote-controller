@@ -9,6 +9,7 @@ import java.net.SocketException;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.app.Activity;
 import android.content.Intent;
 import android.text.method.KeyListener;
@@ -32,6 +33,9 @@ public class MouseActivity extends Activity implements OnTouchListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mouse);
+        
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
         
         if(MainActivity.isConnected){
         	addr = WifiConnection.getInstance().socket.getInetAddress();
@@ -72,7 +76,12 @@ public class MouseActivity extends Activity implements OnTouchListener{
 		
 		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_DOWN && event.getPointerCount() == 2){
 			
-			new SendAsyncTask().execute(new DatagramPacket("MOUSE/RIGHT_CLICK/".getBytes(),"MOUSE/RIGHT_CLICK/".length(), addr,7880));
+			try {
+				socket.send(new DatagramPacket("MOUSE/RIGHT_CLICK/".getBytes(),"MOUSE/RIGHT_CLICK/".length(), addr,7880));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		
 		}else
@@ -89,7 +98,12 @@ public class MouseActivity extends Activity implements OnTouchListener{
 				if (Math.abs((int)event.getX() - downX) < 2
 						&& Math.abs((int)event.getY() - downY) < 2 ){
 					
-					new SendAsyncTask().execute(new DatagramPacket("MOUSE/CLICK/".getBytes(),"MOUSE/CLICK/".length(), addr, 7880));
+					try {
+						socket.send(new DatagramPacket("MOUSE/CLICK/".getBytes(),"MOUSE/CLICK/".length(), addr, 7880));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 				}
 					
@@ -101,7 +115,12 @@ public class MouseActivity extends Activity implements OnTouchListener{
 					x = (int)event.getX();
 					y = (int)event.getY();
 					
-					new SendAsyncTask().execute(new DatagramPacket(("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").getBytes(),("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").length(), addr, 7880));
+					try {
+						socket.send(new DatagramPacket(("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").getBytes(),("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").length(), addr, 7880));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					
 					lastX = x;
 					lastY = y;
@@ -113,18 +132,4 @@ public class MouseActivity extends Activity implements OnTouchListener{
 		return false;
 	}
 	
-	private class SendAsyncTask extends AsyncTask<DatagramPacket, Void, Void>{
-
-		@Override
-		protected Void doInBackground(DatagramPacket... params) {
-			try {
-				socket.send(params[0]);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			return null;
-		}
-		
-	}
 }
