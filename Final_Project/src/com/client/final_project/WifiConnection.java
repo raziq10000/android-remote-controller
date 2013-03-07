@@ -36,7 +36,7 @@ public class WifiConnection extends Connection {
 			socket = new Socket(ia, connectionPort);
 			intiliazeStreams();
 			conControlRun();
-			connectionType = WIFI_CONNECTÝON;
+			connectionType = WIFI_CONNECTION;
 		}
 
 		@Override

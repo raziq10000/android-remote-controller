@@ -31,7 +31,7 @@ import android.util.Log;
 
 public abstract class Connection {
 
-	public final static int WIFI_CONNECTÝON = 2, BLUETOOTH_CONNECTÝON = 3;
+	public final static int WIFI_CONNECTION = 2, BLUETOOTH_CONNECTION = 3;
 			
 	protected final String connection_startcode = "a";
 	protected final String connection_correction = "f";
@@ -42,9 +42,9 @@ public abstract class Connection {
 	public static Connection getConnection(int connection_type) {
 
 		if (instance == null)
-			if (WIFI_CONNECTÝON == connection_type)
+			if (WIFI_CONNECTION == connection_type)
 				instance = new WifiConnection();
-			else if (BLUETOOTH_CONNECTÝON == connection_type)
+			else if (BLUETOOTH_CONNECTION == connection_type)
 				instance = new BluetoothConnection();
 			else
 				throw new Error("Wrong Connection Type");

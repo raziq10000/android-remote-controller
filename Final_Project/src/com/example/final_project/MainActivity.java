@@ -140,7 +140,7 @@ public class MainActivity extends Activity implements SensorEventListener {
 					|| sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD
 					|| sensor.getType() == Sensor.TYPE_GYROSCOPE
 					||   sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION)
-				sensorManager.registerListener(listener, sensor,
+				sensorManager.register"1"istener(listener, sensor,
 						SensorManager.SENSOR_DELAY_NORMAL);
 		}*/
 

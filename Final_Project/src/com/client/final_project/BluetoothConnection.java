@@ -32,7 +32,7 @@ public class BluetoothConnection extends Connection {
 			socket = device.createRfcommSocketToServiceRecord(connectUuid);
 			socket.connect();
 			conControlRun();
-			connectionType = BLUETOOTH_CONNECTÝON;
+			connectionType = BLUETOOTH_CONNECTION;
 		}
 
 		@Override

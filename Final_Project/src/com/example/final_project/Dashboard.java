@@ -45,8 +45,7 @@ public class Dashboard extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				try {
-					WifiConnection.getInstance().close();
-					MainActivity.isConnected = false;
+					
 					finish();
 					
 				} catch (Exception e) {
@@ -69,9 +68,10 @@ public class Dashboard extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		try {
-			WifiConnection.getInstance().close();
-			MainActivity.isConnected = false;
-			finish();
+			if(MainActivity.isConnected){
+				WifiConnection.getInstance().close();
+				MainActivity.isConnected = false;
+			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
