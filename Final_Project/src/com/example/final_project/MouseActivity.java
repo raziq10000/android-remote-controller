@@ -66,77 +66,77 @@ public class MouseActivity extends Activity implements OnTouchListener{
         return true;
     }
     
-    private long lastUpdate = -1, down_time = -1;
+    
     int lastX, lastY, x, y, downX, downY;
-   // boolean taken = false;
+    boolean scrolling = false;
 
-	public boolean onTouch(View v, MotionEvent event) {
-		long curTime = event.getEventTime();
+	public boolean onTouch(View v, MotionEvent event) {	
 		
-		
-		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && event.getPointerCount() == 2){
-			
-			try {
-				socket.send(new DatagramPacket("MOUSE/RIGHT_CLICK/".getBytes(),"MOUSE/RIGHT_CLICK/".length(), addr,7880));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && event.getPointerCount() == 2) {	
+			if (scrolling) {
+				scrolling = false;
+			} else {
+				try {
+					socket.send(new DatagramPacket("MOUSE/RIGHT_CLICK/".getBytes(),"MOUSE/RIGHT_CLICK/".length(), addr,7880));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}		
 			}
-			
-		
-		}else
-		
-
-			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				down_time = curTime;
-				lastUpdate = curTime;
-				downX = lastX = (int)event.getX();
-				downY = lastY = (int)event.getY();
-				return true;
-			} else if (event.getAction() == MotionEvent.ACTION_UP) {
-
-				if (Math.abs((int)event.getX() - downX) < 2
-						&& Math.abs((int)event.getY() - downY) < 2 ){
+						
+		} else	if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			downX = lastX = (int)event.getX();
+			downY = lastY = (int)event.getY();
+			return true;
+				
+		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+			if (Math.abs((int)event.getX() - downX) < 2
+					&& Math.abs((int)event.getY() - downY) < 2 ) {
 					
-					try {
-						socket.send(new DatagramPacket("MOUSE/CLICK/".getBytes(),"MOUSE/CLICK/".length(), addr, 7880));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
+				try {
+					socket.send(new DatagramPacket("MOUSE/CLICK/".getBytes(),"MOUSE/CLICK/".length(), addr, 7880));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
+					
+			}
 					
 				return false;
-			} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-	
-				if (event.getAction() == MotionEvent.ACTION_MOVE && event.getPointerCount() == 2) {
-					TextView a = (TextView)findViewById(R.id.textView1);
-					a.append("scroll " + event.getY() + "\n");
-				}else{
-					lastUpdate = curTime;
-					x = (int)event.getX();
-					y = (int)event.getY();
-					
-					try {
-						socket.send(new DatagramPacket(("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").getBytes(),("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").length(), addr, 7880));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					lastX = x;
-					lastY = y;
-				}
-					return true;
-			}
-		
+				
+		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			x = (int)event.getX();
+			y = (int)event.getY();
 			
+			if (event.getPointerCount() == 2) {
+				scrolling = true;
+					
+				try {
+					socket.send(new DatagramPacket(("MOUSE/SCROLL/" + (y - lastY) + "/").getBytes(),
+							("MOUSE/SCROLL/" + (y - lastY) + "/").length(), addr, 7880));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			} else {
+				x = (int)event.getX();
+				y = (int)event.getY();
+					
+				try {
+					socket.send(new DatagramPacket(("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").getBytes(),
+							("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").length(), addr, 7880));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+					
+			}
+			
+				lastX = x;
+				lastY = y;
+				
+				return true;
+		}		
 		
 		return false;
-	}
-
-	
+	}	
 
 	@Override
 	protected void onPause() {
