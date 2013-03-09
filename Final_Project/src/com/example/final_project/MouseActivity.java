@@ -75,6 +75,11 @@ public class MouseActivity extends Activity implements OnTouchListener{
 		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && event.getPointerCount() == 2) {	
 			if (scrolling) {
 				scrolling = false;
+				if (event.getActionIndex() == 0) {
+					lastX = (int) event.getX(1);
+					lastY = (int) event.getY(1);
+				}
+				
 			} else {
 				try {
 					socket.send(new DatagramPacket("MOUSE/RIGHT_CLICK/".getBytes(),"MOUSE/RIGHT_CLICK/".length(), addr,7880));
@@ -88,7 +93,13 @@ public class MouseActivity extends Activity implements OnTouchListener{
 			downY = lastY = (int)event.getY();
 			return true;
 				
-		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+		} else	if (event.getAction() == MotionEvent.ACTION_POINTER_1_DOWN) {
+			lastX = (int)event.getX();
+			lastY = (int)event.getY();
+			return true;
+				
+		} 
+		else if (event.getAction() == MotionEvent.ACTION_UP) {
 			if (Math.abs((int)event.getX() - downX) < 2
 					&& Math.abs((int)event.getY() - downY) < 2 ) {
 					
@@ -103,12 +114,14 @@ public class MouseActivity extends Activity implements OnTouchListener{
 				return false;
 				
 		} else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+			
 			x = (int)event.getX();
 			y = (int)event.getY();
 			
 			if (event.getPointerCount() == 2) {
 				scrolling = true;
-					
+				
+				
 				try {
 					socket.send(new DatagramPacket(("MOUSE/SCROLL/" + (y - lastY) + "/").getBytes(),
 							("MOUSE/SCROLL/" + (y - lastY) + "/").length(), addr, 7880));
@@ -116,23 +129,24 @@ public class MouseActivity extends Activity implements OnTouchListener{
 					e.printStackTrace();
 				}
 				
+				
 			} else {
-				x = (int)event.getX();
-				y = (int)event.getY();
-					
+				
+				
 				try {
 					socket.send(new DatagramPacket(("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").getBytes(),
 							("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").length(), addr, 7880));
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-					
+				
 			}
 			
-				lastX = x;
-				lastY = y;
+			lastX = x;
+			lastY = y;
 				
-				return true;
+				
+			return true;
 		}		
 		
 		return false;
