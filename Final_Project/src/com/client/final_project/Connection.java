@@ -14,9 +14,9 @@ public abstract class Connection {
 			
 	protected final String connection_startcode = "a";
 	protected final String connection_correction = "f";
-    protected int connectionType ;
+    protected  static int connectionType ;
 	private static Connection instance;
-	private boolean isConnected = false;
+	protected  static boolean isConnected = false;
 
 	public static Connection getConnection(int connection_type) {
 
@@ -27,9 +27,42 @@ public abstract class Connection {
 				instance = new BluetoothConnection();
 			else
 				throw new Error("Wrong Connection Type");
+		
+			 
 
 		return instance;
 	}
+	public static WifiConnection getWifiConnection() {
+
+		if (instance == null){
+				instance = new WifiConnection();
+				
+		}
+		if(connectionType == BLUETOOTH_CONNECTION)
+				return null;
+		
+				 
+	
+			return (WifiConnection)instance;
+	}
+	public static BluetoothConnection getBluetoothConnection() {
+
+		if (instance == null){
+				instance = new BluetoothConnection();
+				
+		}
+		if(connectionType == WIFI_CONNECTION)
+				return null;
+		
+			 
+
+		return (BluetoothConnection)instance;
+	}
+	
+	public static Connection getConnection() {
+		return instance;
+	}
+
     
 	protected PrintWriter output;
 
@@ -42,6 +75,8 @@ public abstract class Connection {
 	public abstract OutputStream getOutputStream() throws IOException;
 
 	public abstract InputStream getInputStream() throws IOException;
+	
+	public abstract void sendMessage(String s) throws SocketException, Exception;
 
 	public PrintWriter getWriter() throws IOException {
 
@@ -57,8 +92,8 @@ public abstract class Connection {
 		return new BufferedReader(new InputStreamReader(getInputStream()));
 	}
 
-	public void sendMessage(String s) throws SocketException, Exception {
-		output.write(s);
+	protected void sendMsgOutputStream(String s) throws SocketException, Exception {
+		output.println(s);
 		try {
 			if (output.checkError() == true)
 				close();
@@ -83,7 +118,7 @@ public abstract class Connection {
 		return connectionType;
 	}
 
-	public boolean isConnected() {
+	public  boolean isConnected() {
 		return isConnected;
 	}
 
@@ -102,9 +137,9 @@ public abstract class Connection {
 		@Override
 		public void run() {
 			try {
-				while (input != null) {
+				while (input != null) 
 					input = readMessage();
-				}
+				isConnected = false;
 
 				close();
 			} catch (Exception e) {

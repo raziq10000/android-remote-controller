@@ -22,6 +22,8 @@ public class WifiConnection extends Connection {
 
 		boolean reliableMode = true;
 
+		
+
 		final static int connectionPort = 7878;
 		final static int searchPort = 7880;
 
@@ -35,8 +37,9 @@ public class WifiConnection extends Connection {
 			InetAddress ia = InetAddress.getByName(server);
 			socket = new Socket(ia, connectionPort);
 			intiliazeStreams();
-			conControlRun();
+			//conControlRun();
 			connectionType = WIFI_CONNECTION;
+			isConnected = true;
 		}
 
 		@Override
@@ -62,9 +65,22 @@ public class WifiConnection extends Connection {
 			return socket.getInputStream();
 		}
 
+		
+		public void sendMessage(String s) throws Exception {
+			if (reliableMode) {
+				sendMsgOutputStream(s);
+				return;
+			}
+
+			DatagramSocket socket = new DatagramSocket();
+			DatagramPacket datagrampacket = new DatagramPacket(s.getBytes(),
+					s.length(), this.socket.getInetAddress(),searchPort);
+			socket.send(datagrampacket);
+
+		}
 		public void sendDiscoveryMessages() throws IOException {
 
-			final int TIMEOUT = 1500;
+			final int TIMEOUT = 1500 ;
 
 			DatagramSocket searchSocket = new DatagramSocket();
 			searchSocket.setBroadcast(true);
@@ -76,18 +92,6 @@ public class WifiConnection extends Connection {
 
 		}
 
-		public void sendMessage(String s) throws Exception {
-			if (reliableMode) {
-				super.sendMessage(s);
-				return;
-			}
-
-			DatagramSocket socket = new DatagramSocket();
-			DatagramPacket datagrampacket = new DatagramPacket(s.getBytes(),
-					s.length(), socket.getInetAddress(), searchPort);
-			socket.send(datagrampacket);
-
-		}
 
 		private void sendDiscoveryRequest(DatagramSocket socket)
 				throws IOException {
@@ -97,7 +101,15 @@ public class WifiConnection extends Connection {
 					connection_startcode.getBytes(),
 					connection_startcode.length(), bcastAddress, searchPort);
 			socket.send(bcastPacket);
-			listenForResponses(socket);
+			
+		}
+		
+		public void setUnReliableMode() {
+			this.reliableMode = false;
+		}
+		
+		public void setReliableMode(){
+			this.reliableMode = true;
 		}
 
 		private void listenForResponses(DatagramSocket socket)
@@ -108,11 +120,12 @@ public class WifiConnection extends Connection {
 					DatagramPacket recvPacket = new DatagramPacket(buf,
 							buf.length);
 					socket.receive(recvPacket);
-					String recvedString = new String(recvPacket.getData());
+					String recvedString = new String(recvPacket.getData()).trim();
 					Log.d("Beacon", "Received response " + recvedString);
 					if (recvedString.equals(connection_correction)) {
 						Log.v("Beacon", "S");
 						networkofNodes.add(recvPacket.getAddress());
+						break;
 					}
 
 				}
@@ -137,9 +150,8 @@ public class WifiConnection extends Connection {
 			return InetAddress.getByAddress(quads);
 		}
 
-		public void setContext(Context context) {
-			wManager = (WifiManager) context
-					.getSystemService(Context.WIFI_SERVICE);
+		public void setwManager(WifiManager wManager) {
+			this.wManager = wManager;
 		}
 		
 		public WifiManager getwManager() {

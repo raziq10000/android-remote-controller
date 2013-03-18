@@ -3,12 +3,14 @@ package com.client.final_project;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.SocketException;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 
 public class BluetoothConnection extends Connection {
 
@@ -31,9 +33,18 @@ public class BluetoothConnection extends Connection {
 			this.bluetoothDevice = device;
 			socket = device.createRfcommSocketToServiceRecord(connectUuid);
 			socket.connect();
+			if(bluetoothAdapter.isDiscovering())
+				bluetoothAdapter.cancelDiscovery();
+			intiliazeStreams();
 			conControlRun();
 			connectionType = BLUETOOTH_CONNECTION;
+			isConnected = true;
 		}
+		
+		public boolean isBluetoothOpen() {
+		   return bluetoothAdapter.isEnabled();	
+		}
+		
 
 		@Override
 		public void close() {
@@ -59,6 +70,10 @@ public class BluetoothConnection extends Connection {
 		public boolean serverConfirm(String server) {
 			return serverConfirm(bluetoothAdapter.getRemoteDevice(server));
 		}
+		public boolean startDiscovery() {
+			return bluetoothAdapter.startDiscovery();
+        }
+		
         
 		public boolean serverConfirm(BluetoothDevice server) {
 			final AtomicBoolean isServer = new AtomicBoolean(false);
@@ -97,5 +112,11 @@ public class BluetoothConnection extends Connection {
 				isServer.set(false);
 			}
 			return isServer.get();
+		}
+
+		@Override
+		public void sendMessage(String s) throws SocketException, Exception {
+			sendMsgOutputStream(s);
+			
 		}
 	}

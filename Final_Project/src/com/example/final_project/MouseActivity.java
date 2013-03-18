@@ -4,30 +4,22 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
-import java.net.SocketException;
-
-import android.os.AsyncTask;
+import com.client.final_project.WifiConnection;
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.app.Activity;
-import android.content.Intent;
-import android.text.method.KeyListener;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.view.View.OnTouchListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.client.final_project.Connection;
 
 public class MouseActivity extends Activity implements OnTouchListener{
 
-		WifiConnection c;
-		private DatagramSocket socket;
-		private DatagramPacket packet;
-		private InetAddress addr;
+		Connection c = Connection.getConnection();
+		
 		
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,14 +29,11 @@ public class MouseActivity extends Activity implements OnTouchListener{
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         
-        if(MainActivity.isConnected){
-        	addr = WifiConnection.getInstance().socket.getInetAddress();
-            try {
-    			socket = new DatagramSocket(7880);
-    		} catch (SocketException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
+        if(c.isConnected()){
+        	if (c.getConnectionType() == Connection.WIFI_CONNECTION) {
+        		WifiConnection wifiConnection = Connection.getWifiConnection();
+        		wifiConnection.setUnReliableMode();
+        	}
             View v = findViewById(R.id.textView1);
             v.setOnTouchListener(this);
             
@@ -77,8 +66,8 @@ public class MouseActivity extends Activity implements OnTouchListener{
 		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP && event.getPointerCount() == 2){
 			
 			try {
-				socket.send(new DatagramPacket("MOUSE/RIGHT_CLICK/".getBytes(),"MOUSE/RIGHT_CLICK/".length(), addr,7880));
-			} catch (IOException e) {
+				c.sendMessage("MOUSE/RIGHT_CLICK/");
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -99,8 +88,8 @@ public class MouseActivity extends Activity implements OnTouchListener{
 						&& Math.abs((int)event.getY() - downY) < 2 ){
 					
 					try {
-						socket.send(new DatagramPacket("MOUSE/CLICK/".getBytes(),"MOUSE/CLICK/".length(), addr, 7880));
-					} catch (IOException e) {
+						c.sendMessage("MOUSE/CLICK/");
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -119,8 +108,8 @@ public class MouseActivity extends Activity implements OnTouchListener{
 					y = (int)event.getY();
 					
 					try {
-						socket.send(new DatagramPacket(("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").getBytes(),("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/").length(), addr, 7880));
-					} catch (IOException e) {
+						c.sendMessage("MOUSE/" + (x - lastX) + "/" + (y - lastY) + "/");
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
@@ -141,9 +130,7 @@ public class MouseActivity extends Activity implements OnTouchListener{
 	@Override
 	protected void onPause() {
 		super.onPause();
-		
-		if(socket != null)
-			socket.close();
+		c.close();
 	}
 	
 	

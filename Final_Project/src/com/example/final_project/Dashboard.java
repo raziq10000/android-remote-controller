@@ -1,5 +1,7 @@
 package com.example.final_project;
 
+import com.client.final_project.Connection;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -12,7 +14,8 @@ public class Dashboard extends Activity {
 
 	private Button exitBt;
 	private Button mouseBt;
-	private Button wifiBt;	
+	private Button wifiBt;
+	private Button bltthBt;	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,13 +24,28 @@ public class Dashboard extends Activity {
 		this.wifiBt = (Button)findViewById(R.id.wifiBt);
 	    this.mouseBt = (Button)findViewById(R.id.mouseBt);
 	    this.exitBt = (Button)findViewById(R.id.exitBt);
+	    this.bltthBt = (Button)findViewById(R.id.bluetoothBt);
 	    
 	    wifiBt.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(Dashboard.this, MainActivity.class);
+				//Intent intent = new Intent(Dashboard.this, ScanActivity.class);
+				//intent.putExtra("connectionType", Connection.WIFI_CONNECTION);
+				Intent intent = new Intent(Dashboard.this,ScanActivity.class);
+				intent.putExtra("connectionType", Connection.WIFI_CONNECTION);
 				startActivity(intent);			
+			}
+		});
+	    
+	    
+	    bltthBt.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(Dashboard.this, ScanActivity.class);
+				intent.putExtra("connectionType", Connection.BLUETOOTH_CONNECTION);
+				startActivity(intent);
 			}
 		});
 	    

@@ -119,7 +119,7 @@ public class WifiConnection{
 	private void sendDiscoveryRequest(DatagramSocket socket, WifiManager wManager) throws IOException {
 		    
 		InetAddress bcastAddress = getBroadcastAddress(wManager);
-		DatagramPacket bcastPacket = new DatagramPacket(MESSAGE.getBytes(), MESSAGE.length(), bcastAddress, searchPort);
+		DatagramPacket bcastPacket = new DatagramPacket("a".getBytes(), 1, bcastAddress, searchPort);
 		socket.send(bcastPacket);
     }
 	
@@ -131,7 +131,7 @@ public class WifiConnection{
 		        socket.receive(recvPacket);
 		        String recvedString = new String(recvPacket.getData(),0,MESSAGE.length());
 		        Log.d("Beacon", "Received response " + recvedString);
-		        if(recvedString.equals(MESSAGE)) {
+		        if(recvedString.equals("f")) {
 					Log.v("Beacon", "S");
 					recvedString = new String(recvPacket.getData(), MESSAGE.length(),recvPacket.getLength() - MESSAGE.length());
 					servers.put(recvedString, recvPacket.getAddress());
