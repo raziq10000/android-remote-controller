@@ -73,7 +73,6 @@ public class ServerScreen{
 		LOGGER.addHandler(new TextAreaHandler());
 		initialize();
 		
-		
 	}
 	
 	
