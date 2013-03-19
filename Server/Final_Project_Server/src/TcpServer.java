@@ -1,21 +1,12 @@
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Robot;
-import java.awt.event.InputEvent;
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-
-import javax.imageio.ImageIO;
 
 
 
