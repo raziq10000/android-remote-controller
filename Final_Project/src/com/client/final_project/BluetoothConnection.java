@@ -8,9 +8,9 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 
 public class BluetoothConnection extends Connection {
 
@@ -29,7 +29,7 @@ public class BluetoothConnection extends Connection {
 		}
       
 		public void connect(BluetoothDevice device) throws IOException {
-
+			
 			this.bluetoothDevice = device;
 			socket = device.createRfcommSocketToServiceRecord(connectUuid);
 			socket.connect();
@@ -49,7 +49,13 @@ public class BluetoothConnection extends Connection {
 		@Override
 		public void close() {
 			try {
+				try {
+					sendMessage("exit");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				socket.close();
+				setConnected(false);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -115,7 +121,7 @@ public class BluetoothConnection extends Connection {
 		}
 
 		@Override
-		public void sendMessage(String s) throws SocketException, Exception {
+		public  void sendMessage(String s) throws SocketException, Exception {
 			sendMsgOutputStream(s);
 			
 		}

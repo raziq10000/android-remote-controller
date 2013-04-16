@@ -10,5 +10,10 @@
     <string name="title_activity_dashboard">Dashboard</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_scan">connect server</string>
+    <string name="title_activity_vlc">VLCActivity</string>
+    <string name="title_activity_power_point">PowerPointActivity</string>
+    <string name="alertDialog">Enter slide number : </string>
+    <string name="title_activity_remotes_list">RemotesListActivity</string>
+    <string name="title_activity_keyboard">KeyboardActivity</string>
 
 </resources>

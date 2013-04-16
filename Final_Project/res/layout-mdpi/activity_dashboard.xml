@@ -39,12 +39,12 @@
         android:layout_alignParentBottom="true" >
         
         <Button 
-            android:id="@+id/mouseBt" 
+            android:id="@+id/remotesListBt" 
             android:background="@android:color/darker_gray" 
             android:layout_width="0dp" 
             android:layout_height="fill_parent" 
             android:layout_marginRight="1dp" 
-            android:text="MOUSE" 
+            android:text="REMOTES" 
             android:layout_weight="1" />
         
         <Button 

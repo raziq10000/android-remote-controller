@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class WifiConnection extends Connection {
 
-		Socket socket;
+		private Socket socket;
 
 		boolean reliableMode = true;
 
@@ -44,8 +44,16 @@ public class WifiConnection extends Connection {
 
 		@Override
 		public void close() {
+			
 			try {
-				socket.close();
+				try {
+					sendMessage("exit");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				if(socket != null)
+					socket.close();
+				setConnected(false);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

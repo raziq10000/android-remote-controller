@@ -76,7 +76,7 @@ public abstract class Connection {
 
 	public abstract InputStream getInputStream() throws IOException;
 	
-	public abstract void sendMessage(String s) throws SocketException, Exception;
+	public abstract   void  sendMessage(String s) throws SocketException, Exception;
 
 	public PrintWriter getWriter() throws IOException {
 
@@ -92,11 +92,13 @@ public abstract class Connection {
 		return new BufferedReader(new InputStreamReader(getInputStream()));
 	}
 
-	protected void sendMsgOutputStream(String s) throws SocketException, Exception {
+	protected synchronized void  sendMsgOutputStream(String s) throws SocketException, Exception {
 		output.println(s);
+		
+		output.flush();
 		try {
-			if (output.checkError() == true)
-				close();
+		//	if (output.checkError() == true)
+		//		close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
