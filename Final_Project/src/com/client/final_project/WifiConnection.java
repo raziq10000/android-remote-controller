@@ -39,7 +39,7 @@ public class WifiConnection extends Connection {
 			intiliazeStreams();
 			//conControlRun();
 			connectionType = WIFI_CONNECTION;
-			isConnected = true;
+			setConnected(true);
 		}
 
 		@Override

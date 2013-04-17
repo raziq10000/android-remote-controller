@@ -124,7 +124,7 @@ public abstract class Connection {
 		return isConnected;
 	}
 
-	public void setConnected(boolean isConnected) {
+	public synchronized void setConnected(boolean isConnected) {
 		this.isConnected = isConnected;
 	}
 
@@ -134,17 +134,18 @@ public abstract class Connection {
 
 	class ConnControl implements Runnable {
 
-		String input = "";
-
+		String msg = "";
+        
 		@Override
 		public void run() {
 			try {
-				while (input != null) 
-					input = readMessage();
-				isConnected = false;
-
+				while (msg != null || msg.equals("exit")) 
+					msg = input.readLine();
+				setConnected(false);
 				close();
 			} catch (Exception e) {
+				setConnected(false);
+				close();
 				e.printStackTrace();
 			}
 
