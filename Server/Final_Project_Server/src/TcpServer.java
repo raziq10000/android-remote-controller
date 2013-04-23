@@ -46,7 +46,8 @@ public class TcpServer extends Thread{
 				ServerScreen.LOGGER.info("Client connected " + client.getInetAddress().getHostAddress());
 				in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 				out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
-				
+				MessageHandler.getInstance().setInput(client.getInputStream());
+				MessageHandler.getInstance().setOutput(client.getOutputStream());
 				//sendToClient("I'm Server -> " + server.getLocalSocketAddress());
 				
 				while(true){

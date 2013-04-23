@@ -4,9 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.SocketException;
+
+import android.util.Log;
+
+import com.google.gson.Gson;
 
 public abstract class Connection {
 
@@ -17,7 +22,8 @@ public abstract class Connection {
     protected  static int connectionType ;
 	private static Connection instance;
 	protected  static boolean isConnected = false;
-
+	StringBuffer inputBuffer = new StringBuffer();
+	
 	public static Connection getConnection(int connection_type) {
 
 		if (instance != null && instance.isConnected())
@@ -111,6 +117,15 @@ public abstract class Connection {
 		}
 	}
 	
+	private String readBuffer() {
+		String in ;
+		synchronized (Connection.class) {
+			in = inputBuffer.toString();
+			inputBuffer.delete(0, inputBuffer.length());
+		}
+		return in;
+	}
+	
 	public int getConnectionType() {
 		return connectionType;
 	}
@@ -118,6 +133,24 @@ public abstract class Connection {
 	public  boolean isConnected() {
 		return isConnected;
 	}
+	
+	public RemoteFile getRemoteFile(String absolutePath) {
+		RemoteFile file = null;
+		try {
+			sendMessage("sendFile/"+absolutePath);
+			BufferedReader r = getBufferedReader();
+			String jsonStr;
+			while((jsonStr = readBuffer()).equals(""));
+			
+		    Gson gson = new Gson();
+			file = gson.fromJson(jsonStr, RemoteFile.class);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return file;
+	}
+	
 
 	public synchronized void setConnected(boolean isConnected) {
 		this.isConnected = isConnected;
@@ -134,9 +167,17 @@ public abstract class Connection {
 		@Override
 		public void run() {
 			try {
-				while (msg != null || msg.equals("exit")) 
-					msg = input.readLine();
-				
+				char b[] = new char[1024];
+				while (input.read(b) != -1) {
+					msg = new String(b).trim();
+					if (msg == null || msg.equals("exit"))
+						break;
+					synchronized (Connection.class) {
+						inputBuffer = inputBuffer.append(msg);
+					}
+					for (int i = 0; i < b.length; i++)
+						b[i] = 0;
+				}
 				setConnected(false);
 				close();
 			} catch (Exception e) {
@@ -148,7 +189,4 @@ public abstract class Connection {
 		}
 
 	}
-
-	
-	
 }

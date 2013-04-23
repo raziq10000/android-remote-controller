@@ -37,7 +37,7 @@ public class MouseActivity extends Activity implements OnTouchListener {
 		if (c != null && c.isConnected()) {
 			mgr = (SensorManager) this.getSystemService(SENSOR_SERVICE);
 			
-	       	DetermineOrientation s = new  DetermineOrientation(mgr,Sensor.TYPE_GRAVITY| Sensor.TYPE_MAGNETIC_FIELD);
+//	       	DetermineOrientation s = new  DetermineOrientation(mgr,Sensor.TYPE_GRAVITY| Sensor.TYPE_MAGNETIC_FIELD);
 			gyro = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
 			/*gyroListener = new GyroscopeListener(c);
 			mgr.registerListener(gyroListener, gyro,

@@ -20,6 +20,7 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import com.client.final_project.Connection;
+import com.example.sensorListerners.DetermineOrientation;
 import com.example.sensorListerners.GyroscopeListener;
 
 public class InputActivity extends Activity implements OnTouchListener {
@@ -28,6 +29,7 @@ public class InputActivity extends Activity implements OnTouchListener {
 	private SensorManager mgr;
 	private Sensor gyro;
 	private GyroscopeListener gyroListener;
+	private DetermineOrientation dor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class InputActivity extends Activity implements OnTouchListener {
 		if (conn != null && conn.isConnected()) {
 			mgr = (SensorManager) this.getSystemService(SENSOR_SERVICE);
 			gyro = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+			dor = new DetermineOrientation(this, Sensor.TYPE_GRAVITY|Sensor.TYPE_MAGNETIC_FIELD);
 			/*
 			 * gyroListener = new GyroscopeListener(c);
 			 * mgr.registerListener(gyroListener, gyro,
@@ -236,5 +239,10 @@ public class InputActivity extends Activity implements OnTouchListener {
 
 		return super.dispatchKeyEvent(KEvent);
 	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+        dor.stop();
 
+	}
 }

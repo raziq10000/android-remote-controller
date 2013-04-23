@@ -65,6 +65,8 @@ public class BluetoothServer extends Thread {
 				connected = true;
 				input = connection.openInputStream();
 				output = connection.openDataOutputStream();
+				MessageHandler.getInstance().setInput(input);
+				MessageHandler.getInstance().setOutput(output);
 				System.out.println("Connected ...");
 			} catch (IOException ex) {
 				ex.printStackTrace();

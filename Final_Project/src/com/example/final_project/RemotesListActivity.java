@@ -1,8 +1,9 @@
 package com.example.final_project;
 
-import android.os.Bundle;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -10,10 +11,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.client.final_project.Connection;
+import com.client.final_project.RemoteFile;
+
 public class RemotesListActivity extends ListActivity {
 
 	static final String[] PROGRAMS = new String[] { "Touchpad & Keyboard", 
-			"VLC Media Player", "Presentation", "System"};
+			"VLC Media Player", "Presentation", "System","Choose file"};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +49,15 @@ public class RemotesListActivity extends ListActivity {
 					break;
 				case 3:
 					intent = new Intent(RemotesListActivity.this, SystemOpsActivity.class);
+					break;
+				case 4:
+					Connection c = Connection.getConnection();
+					if(c.isConnected()) {
+						RemoteFile file = c.getRemoteFile("C:\\");
+						if(file != null)
+							for(RemoteFile f:file.getSubfiles())
+								Log.v("rf",f.getAbsolutePath());
+					}
 					break;
 				default:
 					break;

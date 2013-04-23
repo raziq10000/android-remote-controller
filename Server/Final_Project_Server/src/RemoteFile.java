@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class RemoteFile implements Serializable {
 		isIntiliazed = true;
 	}
 	
-	public RemoteFile(String name,String absolutePath) {
+	private RemoteFile(String name,String absolutePath) {
 		this.name = name;
 		this.absolutepath = absolutePath;
 		isIntiliazed = false;
@@ -50,9 +51,10 @@ public class RemoteFile implements Serializable {
 	public String toString() {
 		return (!name.equals("")) ? name : absolutepath;
 	}
-	
-	public void intiliaze() {
-		subfiles = RemoteFileManager.getSubFiles(absolutepath);
-		isIntiliazed = true;
+
+	public void setSubfiles(ArrayList<RemoteFile> subfiles) {
+		this.subfiles = subfiles;
 	}
+	
+	
 }

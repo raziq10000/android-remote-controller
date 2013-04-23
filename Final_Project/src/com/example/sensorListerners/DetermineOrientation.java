@@ -1,12 +1,17 @@
 package com.example.sensorListerners;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.net.SocketException;
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import com.client.final_project.Connection;
 
@@ -19,6 +24,7 @@ public class DetermineOrientation implements SensorEventListener
 {
 	private  int RATE = SensorManager.SENSOR_DELAY_NORMAL;
 	private SensorManager sensorManager;
+	private Context context;
     private float[] accelerationValues;
     private float[] magneticValues;
     private int selectedSensorId;
@@ -26,12 +32,19 @@ public class DetermineOrientation implements SensorEventListener
 	Connection c;
     
    
-	public DetermineOrientation(SensorManager sensorManager,int t) {
-	  this.sensorManager = sensorManager;
-	  selectedSensorId = t;
-	  c = c.getConnection();
-	  updateSelectedSensor();
-	  
+	public DetermineOrientation(Context context, int t) {
+		this.context = context;
+		this.sensorManager = (SensorManager) context
+				.getSystemService(Context.SENSOR_SERVICE);
+		selectedSensorId = t;
+		c = c.getConnection();
+		updateSelectedSensor();
+		try {
+			writer = new PrintWriter(new BufferedWriter(new FileWriter(
+					new File(context.getExternalCacheDir(), "orientation.csv"))));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -155,6 +168,7 @@ public class DetermineOrientation implements SensorEventListener
         double pitch = Math.toDegrees(orientationValues[1]);
         double roll = Math.toDegrees(orientationValues[2]);
         float currentTime = System.currentTimeMillis();
+        writeFile(azimuth, pitch, roll, currentTime);
         if(currentTime - lastTime > TIME_TRESHOLD) {
         	if(roll > 20 && roll < 30 ) {
         		try {
@@ -174,6 +188,19 @@ public class DetermineOrientation implements SensorEventListener
         
     }
     
+    PrintWriter writer; 
+    
+    
+    
+    private void writeFile(double azimuth, double pitch, double roll,float time) {
+    	writer.printf("%f, %f, %f, %f\n",azimuth, pitch, roll, time);
+    }
+    
+    public void stop() {
+        writer.close();
+	}
+    
+    
     /**
      * Handler for device being face up.
      */
@@ -183,7 +210,7 @@ public class DetermineOrientation implements SensorEventListener
      */
     private void updateSelectedSensor()
     {
-        // Clear any current registrations
+      
         sensorManager.unregisterListener(this);
         
         // Determine which radio button is currently selected and enable the

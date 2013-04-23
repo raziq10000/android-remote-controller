@@ -4,13 +4,22 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+
+import com.google.gson.Gson;
 
 public class MessageHandler {
 
 	private Robot robot = null;
 	private static MessageHandler handler = null;
-
+	private  InputStream input;
+	private  OutputStream output;
+	
+	
 	public static MessageHandler getInstance() {
 		if (handler == null)
 			handler = new MessageHandler();
@@ -27,6 +36,23 @@ public class MessageHandler {
 		}
 
 	}
+	
+	public  InputStream getInput() {
+		return input;
+	}
+
+	public  void setInput(InputStream input) {
+		this.input = input;
+	}
+
+	public  OutputStream getOutput() {
+		return output;
+	}
+
+	public  void setOutput(OutputStream output) {
+		this.output = output;
+	}
+
 
 	public synchronized void handle(String msg) {
 
@@ -152,11 +178,30 @@ public class MessageHandler {
 			}
 			
 				
+		} else if(ss[0].equals("sendFile")){
+			sendFiles(ss[1]);
 		} else
 			System.out.println(msg);
 
 	}
 	
+	private void sendFiles(String absolutePath) {
+		RemoteFile file = new RemoteFile(new File(absolutePath));
+		
+			Gson gson = new Gson();
+//			oos.writeObject(file);
+//			oos.flush();
+			String jsonStr = gson.toJson(file);
+			
+			try {
+				output.write(jsonStr.getBytes());
+				ServerScreen.LOGGER.info("File whose  path is " + absolutePath + " send");
+			} catch (IOException e) {
+				ServerScreen.LOGGER.info("File whose  path is " + absolutePath + " fail");
+				e.printStackTrace();
+			}
+	}
+
 	private  void chartoKey(int c) {
 		int nunpads[] = { KeyEvent.VK_NUMPAD0, KeyEvent.VK_NUMPAD1,
 				KeyEvent.VK_NUMPAD2, KeyEvent.VK_NUMPAD3, KeyEvent.VK_NUMPAD4,
