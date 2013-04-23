@@ -6,10 +6,14 @@ import java.io.OutputStream;
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
+import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
+import javax.imageio.spi.ServiceRegistry;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
+
+import com.intel.bluetooth.ServiceRecordsRegistry;
 
 
 public class BluetoothServer extends Thread {

@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class MessageHandler {
 
@@ -77,6 +78,10 @@ public class MessageHandler {
 				typeKey(KeyEvent.VK_F);
 			} else if (ss[1].equals("MUTE")) {
 				typeKey(KeyEvent.VK_M);
+			} else if (ss[1].equals("VOLUMEDOWN")) {
+				typeKey(KeyEvent.VK_CONTROL, KeyEvent.VK_DOWN);
+			} else if (ss[1].equals("VOLUMEUP")) {
+				typeKey(KeyEvent.VK_CONTROL, KeyEvent.VK_UP);
 			}
 		} else if (ss[0].equals("PPT")) {
 			if (ss[1].equals("NEXT")) {
@@ -96,19 +101,86 @@ public class MessageHandler {
 				typeKey(KeyEvent.VK_ENTER);
 			} else if (ss[1].equals("START")) {
 				typeKey(KeyEvent.VK_F5);
+			} else if (ss[1].equals("FINISH")) {
+				typeKey(KeyEvent.VK_ESCAPE);
 			}
 
 		} else if (ss[0].equals("KEY")) {
 			int keycode = Integer.parseInt(ss[1]);
-			type(keycode);
-			System.out.println(keycode);
+			if(keycode >= 32){
+				chartoKey(keycode);
+			}else{
+				switch (keycode) {
+				case 8:
+					typeKey(8);
+					break;
+				case 10:
+					typeKey(10);
+					break;
+				}
+			}
+			
+			
 
+		} else if (ss[0].equals("SYS")) {
+			if(System.getProperty("os.name").startsWith("Windows")){
+				String command = "";
+				
+				if(ss[1].equals("SHUTDOWN")){
+					command = "shutdown /p";
+				} else if (ss[1].equals("RESTART")) {
+					command = "shutdown /r /f /t 0";
+				} else if (ss[1].equals("LOCK")) {
+					command = "rundll32.exe user32.dll, LockWorkStation";
+				} else if (ss[1].equals("LOGOUT")) {
+					command = "shutdown /l /f";
+				} else if (ss[1].equals("HIBERNATE")) {
+					WinSleepHibernate.SetSuspendState(true, true, false);
+				} else if (ss[1].equals("SLEEP")) {
+					WinSleepHibernate.SetSuspendState(false, true, false);
+				}
+				
+				if(command != ""){
+					try {
+						Runtime.getRuntime().exec(command);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			}
+			
+				
 		} else
 			System.out.println(msg);
 
 	}
+	
+	private  void chartoKey(int c) {
+		int nunpads[] = { KeyEvent.VK_NUMPAD0, KeyEvent.VK_NUMPAD1,
+				KeyEvent.VK_NUMPAD2, KeyEvent.VK_NUMPAD3, KeyEvent.VK_NUMPAD4,
+				KeyEvent.VK_NUMPAD5, KeyEvent.VK_NUMPAD6, KeyEvent.VK_NUMPAD7,
+				KeyEvent.VK_NUMPAD8, KeyEvent.VK_NUMPAD9 };
+		
+		char digits [] = Integer.toString(c).toCharArray();
+		int numbers[] = new int[digits.length];
+		for (int i = 0; i < numbers.length; i++) {
+			numbers[i] = digits[i]-48 ;
+		}
+		
+		robot.keyPress(KeyEvent.VK_ALT);
+		for (int i = 0; i < numbers.length; i++) {
+			int keycode = nunpads[numbers[i]];
+			robot.keyPress(keycode);
+			robot.keyRelease(keycode);
+		}
+		  
+		robot.keyRelease(KeyEvent.VK_ALT);
+	}
 
-	private void type(int keycode) {
+
+	/*private void type(int keycode) {
 
 		if (keycode >= 65 && keycode <= 90) {
 			typeKey(KeyEvent.VK_SHIFT, keycode);
@@ -230,19 +302,32 @@ public class MessageHandler {
 		}
 
 	}
-
+*/
 	private void typeKey(int keycode) {
 		robot.keyPress(keycode);
 		robot.keyRelease(keycode);
 		
 	}
 
-	private void typeKey(int i, int keycode) {
-		robot.keyPress(i);
-		robot.keyPress(keycode);
-		robot.keyRelease(keycode);
-		robot.keyRelease(i);
+	private void typeKey(int keycode1, int keycode2) {
+		robot.keyPress(keycode1);
+		robot.keyPress(keycode2);
+		robot.keyRelease(keycode2);
+		robot.keyRelease(keycode1);
 		
 	}
-
+	
+	private void typeKey(int keycode1, int keycode2, int keycode3) {
+		robot.keyPress(keycode1);
+		robot.keyPress(keycode2);
+		robot.keyPress(keycode3);
+		robot.keyRelease(keycode3);
+		robot.keyRelease(keycode2);
+		robot.keyRelease(keycode1);
+		
+	}
+	
 }
+
+
+
