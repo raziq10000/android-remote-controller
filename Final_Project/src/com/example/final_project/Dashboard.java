@@ -49,7 +49,7 @@ public class Dashboard extends Activity {
 						.getSystemService(LAYOUT_INFLATER_SERVICE);
 				final View popupView = layoutInflater.inflate(R.layout.popup, null, true);
 				final PopupWindow popupWindow = new PopupWindow(popupView,
-						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, true);
+						getWindowManager().getDefaultDisplay().getWidth() - 20 , LayoutParams.WRAP_CONTENT, true);
 
 				
 				popupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
@@ -134,12 +134,6 @@ public class Dashboard extends Activity {
 		
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.dashboard, menu);
-		return true;
-	}
 
 	@Override
 	protected void onDestroy() {

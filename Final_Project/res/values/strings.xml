@@ -15,5 +15,6 @@
     <string name="alertDialog">Enter slide number : </string>
     <string name="title_activity_remotes_list">RemotesListActivity</string>
     <string name="title_activity_keyboard">KeyboardActivity</string>
+    <string name="title_activity_system_ops">SystemOpsActivity</string>
 
 </resources>

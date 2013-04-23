@@ -11,19 +11,23 @@
         
         <Button 
             android:id="@+id/wifiBt" 
-            android:background="@android:color/darker_gray" 
+            android:background="@drawable/dashboard_bt" 
             android:layout_width="fill_parent" 
             android:layout_height="fill_parent" 
             android:layout_weight="1"
             android:layout_marginBottom="1dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:text="WIFI" />
          <Button 
             android:id="@+id/bluetoothBt" 
-            android:background="@android:color/darker_gray" 
+            android:background="@drawable/dashboard_bt"
             android:layout_width="fill_parent" 
             android:layout_height="fill_parent"
             android:layout_weight="1" 
             android:layout_marginTop="1dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
             android:text="BLUETOOTH" />
         
         
@@ -38,19 +42,21 @@
         
         <Button 
             android:id="@+id/remotesListBt" 
-            android:background="@android:color/darker_gray" 
+            android:background="@drawable/dashboard_bt" 
             android:layout_width="0dp" 
             android:layout_height="fill_parent" 
-            android:layout_marginRight="1dp" 
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="3dp" 
             android:text="REMOTES" 
             android:layout_weight="1" />
         
         <Button 
             android:id="@+id/exitBt" 
-            android:background="@android:color/darker_gray" 
+            android:background="@drawable/dashboard_bt"
             android:layout_width="0dp" 
             android:layout_height="fill_parent" 
-            android:layout_marginLeft="1dp" 
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="3dp" 
             android:text="EXIT" 
             android:layout_weight="1" />
         

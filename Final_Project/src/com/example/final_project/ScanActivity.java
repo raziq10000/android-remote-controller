@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.UUID;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -27,7 +26,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import com.client.final_project.BluetoothConnection;
 import com.client.final_project.Connection;
 import com.client.final_project.WifiConnection;
@@ -44,13 +42,16 @@ public class ScanActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.scan_layout);
+		setContentView(R.layout.activity_scan);
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-		.permitAll().build();
-StrictMode.setThreadPolicy(policy);
+				.permitAll().build();
+		StrictMode.setThreadPolicy(policy);
+		
 		connectionType = getIntent().getExtras().getInt("connectionType");
-		connection = Connection.getConnection(connectionType);
+		
+		
 		if (connectionType == Connection.WIFI_CONNECTION) {
+			connection = Connection.getConnection(connectionType);
 			WifiManager wManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
 			if (!wManager.isWifiEnabled())
@@ -59,17 +60,18 @@ StrictMode.setThreadPolicy(policy);
 			WifiConnection wifiConnection = (WifiConnection) connection;
 			wifiConnection.setwManager(wManager);
 
-			mArrayAdapter = new ArrayAdapter<Item>(this, R.layout.deviceitem);
-			mArrayAdapter.setNotifyOnChange(true);
+			mArrayAdapter = new ArrayAdapter<Item>(this, R.layout.device_item);
+		
 			new discoveryTask().execute(connection);
 
 		}
 
 		if (connectionType == Connection.BLUETOOTH_CONNECTION) {
+			connection = Connection.getConnection(connectionType);
 			BluetoothConnection bluetoothConnection = (BluetoothConnection) connection;
 			if (mBluetoothAdapter == null) {
-				Toast.makeText(this, "Bluetooth is not supported",
-						Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Bluetooth is not supported on your device!",
+						Toast.LENGTH_SHORT).show();
 				finish();
 				return;
 			}
@@ -80,12 +82,12 @@ StrictMode.setThreadPolicy(policy);
 						BluetoothAdapter.ACTION_REQUEST_ENABLE);
 				startActivityForResult(enableBtIntent, 2);
 			}
-			mArrayAdapter = new ArrayAdapter<Item>(this, R.layout.deviceitem);
+			mArrayAdapter = new ArrayAdapter<Item>(this, R.layout.device_item);
 			Toast.makeText(this, "Search bluetooth", Toast.LENGTH_LONG).show();
 			IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-		//	String action = "android.bleutooth.device.action.UUID";
-		//	IntentFilter filter2 = new IntentFilter(action);
-//			registerReceiver(mReceiver, filter2);
+			// String action = "android.bleutooth.device.action.UUID";
+			// IntentFilter filter2 = new IntentFilter(action);
+			// registerReceiver(mReceiver, filter2);
 			registerReceiver(mReceiver, filter);
 			bluetoothConnection.startDiscovery();
 		}
@@ -98,7 +100,8 @@ StrictMode.setThreadPolicy(policy);
 			@Override
 			public void onItemClick(AdapterView<?> av, View v, int position,
 					long id) {
-				if(connection.isConnected()) return;
+				if (connection.isConnected())
+					return;
 				if (connectionType == Connection.WIFI_CONNECTION) {
 					InetAddress server = mArrayAdapter.getItem(position).ia;
 					try {
@@ -109,7 +112,7 @@ StrictMode.setThreadPolicy(policy);
 								Toast.LENGTH_LONG).show();
 						connection.connect(server.getHostAddress());
 						connection.sendMessage("asdasdasda");
-
+						finish();
 					} catch (Exception e) {
 
 						Toast.makeText(ScanActivity.this,
@@ -147,15 +150,15 @@ StrictMode.setThreadPolicy(policy);
 			if ("android.bleutooth.device.action.UUID".equals(action)) {
 				uuidExtra = intent
 						.getParcelableArrayExtra("android.bluetooth.device.extra.UUID");
-				if(uuidExtra != null)
-					for (Parcelable s : uuidExtra) 
+				if (uuidExtra != null)
+					for (Parcelable s : uuidExtra)
 						Log.d("UUID", s.toString());
 			}
 
 			if (BluetoothDevice.ACTION_FOUND.equals(action)) {
 				BluetoothDevice device = intent
 						.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-				
+
 				for (int i = 0; i < mArrayAdapter.getCount(); i++)
 					if (mArrayAdapter.getItem(i).device.equals(device))
 						return;
@@ -176,7 +179,7 @@ StrictMode.setThreadPolicy(policy);
 			method = BluetoothDevice.class.getMethod("getUuids", null);
 			retval = (ParcelUuid[]) method.invoke(device, null);
 		} catch (Exception e) {
-		
+
 			e.printStackTrace();
 		}
 		UUID uuid = UUID.fromString("00002000-0000-1000-8000-00805F9B34FB");
@@ -185,13 +188,13 @@ StrictMode.setThreadPolicy(policy);
 
 	protected void onPause() {
 		super.onPause();
-		mArrayAdapter.clear();
+		
 	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.scan, menu);
+		getMenuInflater().inflate(R.menu.activity_scan, menu);
 		return true;
 	}
 
@@ -228,15 +231,13 @@ StrictMode.setThreadPolicy(policy);
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			WifiConnection wifiConnection = (WifiConnection) WifiConnection
-					.getConnection(Connection.WIFI_CONNECTION);
+			WifiConnection wifiConnection = Connection.getWifiConnection();
 			if (exp)
 				Toast.makeText(ScanActivity.this, "Server search fail",
 						Toast.LENGTH_LONG).show();
 			List<InetAddress> list = wifiConnection.getNetworkofNodes();
 
-			list.clear();
-			mArrayAdapter.notifyDataSetChanged();
+			
 			if (list.size() == 0)
 				mArrayAdapter.add(new Item());
 			else {

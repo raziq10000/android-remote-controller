@@ -1,5 +1,5 @@
 package com.example.sensorListerners;
-
+/*
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -386,11 +386,11 @@ public class SensorOrientationListener implements SensorEventListener {
 	// float oneMinusCoeff = 1.0f - FILTER_COEFFICIENT;
 	//
 	// /*
-	// * Fix for 179° <--> -179° transition problem: Check whether one of
+	// * Fix for 179ï¿½ <--> -179ï¿½ transition problem: Check whether one of
 	// * the two orientation angles (gyro or accMag) is negative while the
-	// * other one is positive. If so, add 360° (2 * math.PI) to the
-	// * negative value, perform the sensor fusion, and remove the 360°
-	// * from the result if it is greater than 180°. This stabilizes the
+	// * other one is positive. If so, add 360ï¿½ (2 * math.PI) to the
+	// * negative value, perform the sensor fusion, and remove the 360ï¿½
+	// * from the result if it is greater than 180ï¿½. This stabilizes the
 	// * output in positive-to-negative-transition cases.
 	// */
 	//
@@ -485,21 +485,19 @@ public class SensorOrientationListener implements SensorEventListener {
 	// public void updateOreintationDisplay() {
 	// switch(radioSelection) {
 	// case 0:
-	// mAzimuthView.setText(d.format(accMagOrientation[0] * 180/Math.PI) + '°');
-	// mPitchView.setText(d.format(accMagOrientation[1] * 180/Math.PI) + '°');
-	// mRollView.setText(d.format(accMagOrientation[2] * 180/Math.PI) + '°');
+	// mAzimuthView.setText(d.format(accMagOrientation[0] * 180/Math.PI) + 'ï¿½');
+	// mPitchView.setText(d.format(accMagOrientation[1] * 180/Math.PI) + 'ï¿½');
+	// mRollView.setText(d.format(accMagOrientation[2] * 180/Math.PI) + 'ï¿½');
 	// break;
 	// case 1:
-	// mAzimuthView.setText(d.format(gyroOrientation[0] * 180/Math.PI) + '°');
-	// mPitchView.setText(d.format(gyroOrientation[1] * 180/Math.PI) + '°');
-	// mRollView.setText(d.format(gyroOrientation[2] * 180/Math.PI) + '°');
+	// mAzimuthView.setText(d.format(gyroOrientation[0] * 180/Math.PI) + 'ï¿½');
+	// mPitchView.setText(d.format(gyroOrientation[1] * 180/Math.PI) + 'ï¿½');
+	// mRollView.setText(d.format(gyroOrientation[2] * 180/Math.PI) + 'ï¿½');
 	// break;
 	// case 2:
-	// mAzimuthView.setText(d.format(fusedOrientation[0] * 180/Math.PI) + '°');
-	// mPitchView.setText(d.format(fusedOrientation[1] * 180/Math.PI) + '°');
-	// mRollView.setText(d.format(fusedOrientation[2] * 180/Math.PI) + '°');
+	// mAzimuthView.setText(d.format(fusedOrientation[0] * 180/Math.PI) + 'ï¿½');
+	// mPitchView.setText(d.format(fusedOrientation[1] * 180/Math.PI) + 'ï¿½');
+	// mRollView.setText(d.format(fusedOrientation[2] * 180/Math.PI) + 'ï¿½');
 	// break;
 	// }
 	// }
-
-}

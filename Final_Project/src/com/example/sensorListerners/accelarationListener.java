@@ -1,6 +1,5 @@
 package com.example.sensorListerners;
-
-import com.example.final_project.WifiConnection;
+/*
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -76,3 +75,4 @@ public class accelarationListener implements SensorEventListener {
 	}
 
 }
+*/

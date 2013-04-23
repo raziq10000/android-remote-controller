@@ -1,6 +1,8 @@
 package com.example.sensorListerners;
-/*
-import com.example.final_project.Client;
+
+import java.net.SocketException;
+
+import com.client.final_project.Connection;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -8,12 +10,16 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 
-public class GyroscopeListener  implements SensorEventListener{
+public class GyroscopeListener implements SensorEventListener{
 	
-    Client cl;
+    private Connection conn;
+    
+    private static final float MIN_TIME_STEP = (1f / 40f);
+    private long mLastTime = System.currentTimeMillis();
+    private float mRotationX, mRotationY, mRotationZ;
 	
-	public GyroscopeListener(Client cl) {
-	    this.cl = cl;
+	public GyroscopeListener(Connection conn) {
+	    this.conn = conn;
 	}
 
 	@Override
@@ -22,57 +28,49 @@ public class GyroscopeListener  implements SensorEventListener{
 		
 	}
 
-
-	// Create a constant to convert nanoseconds to seconds.
-	private static final float NS2S = 1.0f / 1000000000.0f,
-			                   EPSILON = 0.000001f;
-	private final float[] deltaRotationVector = new float[4];
-	private float timestamp;
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-	  // This timestep's delta rotation to be multiplied by the current rotation
-	  // after computing it from the gyro sample data.
-	  if (timestamp != 0) {
-	    final float dT = (event.timestamp - timestamp) * NS2S;
-	    // Axis of the rotation sample, not normalized yet.
-	    float axisX = event.values[0];
-	    float axisY = event.values[1];
-	    float axisZ = event.values[2];
+		float[] values = event.values;
+        float x = values[0];
+        float y = values[1];
+        float z = values[2];
 
-	    // Calculate the angular speed of the sample
-	    float omegaMagnitude = (float)Math.sqrt(axisX*axisX + axisY*axisY + axisZ*axisZ);
+        float angularVelocity = z * 0.96f; // Minor adjustment to avoid drift on Nexus S
 
-	    // Normalize the rotation vector if it's big enough to get the axis
-	    // (that is, EPSILON should represent your maximum allowable margin of error)
-	    if (omegaMagnitude > EPSILON) {
-	      axisX /= omegaMagnitude;
-	      axisY /= omegaMagnitude;
-	      axisZ /= omegaMagnitude;
-	    }
+        // Calculate time diff
+        long now = System.currentTimeMillis();
+        float timeDiff = (now - mLastTime) / 1000f;
+        mLastTime = now;
+        if (timeDiff > 1) {
+            // Make sure we don't go bananas after pause/resume
+            timeDiff = MIN_TIME_STEP;
+        }
 
-	    // Integrate around this axis with the angular speed by the timestep
-	    // in order to get a delta rotation from this sample over the timestep
-	    // We will convert this axis-angle representation of the delta rotation
-	    // into a quaternion before turning it into the rotation matrix.
-	    float thetaOverTwo = omegaMagnitude * dT / 2.0f;
-	    float sinThetaOverTwo = (float)Math.sin(thetaOverTwo);
-	    float cosThetaOverTwo = (float)Math.cos(thetaOverTwo);
-	    deltaRotationVector[0] = sinThetaOverTwo * axisX;
-	    deltaRotationVector[1] = sinThetaOverTwo * axisY;
-	    deltaRotationVector[2] = sinThetaOverTwo * axisZ;
-	    deltaRotationVector[3] = cosThetaOverTwo;
-	  }
-	  timestamp = event.timestamp;
-	  float[] deltaRotationMatrix = new float[9];
-	  SensorManager.getRotationMatrixFromVector(deltaRotationMatrix, deltaRotationVector);
-	    // User code should concatenate the delta rotation we computed with the current rotation
-	    // in order to get the updated rotation.
-	    // rotationCurrent = rotationCurrent * deltaRotationMatrix;
-	  
-	     cl.sendMessage("deltaRotationMatrix" +  deltaRotationMatrix.toString());
-	   }
+        mRotationX += x * timeDiff;
+        if (mRotationX > 0.5f)
+            mRotationX = 0.5f;
+        else if (mRotationX < -0.5f)
+            mRotationX = -0.5f;
+
+        mRotationY += y * timeDiff;
+        if (mRotationY > 0.5f)
+            mRotationY = 0.5f;
+        else if (mRotationY < -0.5f)
+            mRotationY = -0.5f;
+
+        mRotationZ += angularVelocity * timeDiff;
+
+        try {
+			conn.sendMessage(" X: " + mRotationX + " Y : " + mRotationY + " Z : " + mRotationZ);
+		} catch (SocketException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 
 }
-*/

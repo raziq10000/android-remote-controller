@@ -1,6 +1,5 @@
 package com.example.sensorListerners;
-
-import com.example.final_project.MainActivity;
+/*
 import com.example.final_project.WifiConnection;
 
 import android.hardware.Sensor;
@@ -47,4 +46,4 @@ public class TopRotationListener implements SensorEventListener {
 
 	}
 
-}
+}*/

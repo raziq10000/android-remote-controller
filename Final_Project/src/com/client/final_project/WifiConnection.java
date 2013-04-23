@@ -20,15 +20,13 @@ public class WifiConnection extends Connection {
 
 		private Socket socket;
 
-		boolean reliableMode = true;
-
-		
+		boolean reliableMode = true;		
 
 		final static int connectionPort = 7878;
 		final static int searchPort = 7880;
 
 		private WifiManager wManager;
-		List<InetAddress> networkofNodes = new ArrayList<InetAddress>();
+		private List<InetAddress> networkofNodes = new ArrayList<InetAddress>();
 
 		
 
@@ -37,7 +35,7 @@ public class WifiConnection extends Connection {
 			InetAddress ia = InetAddress.getByName(server);
 			socket = new Socket(ia, connectionPort);
 			intiliazeStreams();
-			//conControlRun();
+			conControlRun();
 			connectionType = WIFI_CONNECTION;
 			setConnected(true);
 		}

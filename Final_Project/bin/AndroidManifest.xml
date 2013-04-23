@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.final_project.MouseActivity"
+            android:name="com.example.final_project.InputActivity"
             android:label="@string/title_activity_mouse" >
         </activity>
         <activity
@@ -58,6 +58,10 @@
         <activity
             android:name="com.example.final_project.KeyboardActivity"
             android:label="@string/title_activity_keyboard" >
+        </activity>
+        <activity
+            android:name="com.example.final_project.SystemOpsActivity"
+            android:label="@string/title_activity_system_ops" >
         </activity>
     </application>
 

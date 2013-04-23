@@ -26,9 +26,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.sensorListerners.SensorOrientationListener;
 
-public class MainActivity extends Activity implements SensorEventListener {
+
+public class MainActivity extends Activity  {
 
 	private SensorManager sensorManager;
 	private List<Sensor> sensors;
@@ -149,7 +149,6 @@ public class MainActivity extends Activity implements SensorEventListener {
 	protected void onPause() {
 		super.onPause();
 		// client.sendMessage("close");
-		sensorManager.unregisterListener(this);
 	}
 
 	public void onAccuracyChanged(Sensor arg0, int arg1) {

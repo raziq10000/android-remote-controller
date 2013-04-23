@@ -1,26 +1,30 @@
 package com.example.final_project;
 
+import java.net.SocketException;
+
 import com.client.final_project.WifiConnection;
 import android.app.Activity;
-import android.bluetooth.BluetoothClass.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 import com.client.final_project.Connection;
-import com.example.sensorListerners.DetermineOrientation;
 import com.example.sensorListerners.GyroscopeListener;
 
-public class MouseActivity extends Activity implements OnTouchListener {
+public class InputActivity extends Activity implements OnTouchListener {
 
-	private Connection c = Connection.getConnection();
+	private Connection conn;
 	private SensorManager mgr;
 	private Sensor gyro;
 	private GyroscopeListener gyroListener;
@@ -28,44 +32,53 @@ public class MouseActivity extends Activity implements OnTouchListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_mouse);
+		setContentView(R.layout.activity_input);
 
 		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
 				.permitAll().build();
 		StrictMode.setThreadPolicy(policy);
 
-		if (c != null && c.isConnected()) {
+		conn = Connection.getConnection();
+
+		if (conn != null && conn.isConnected()) {
 			mgr = (SensorManager) this.getSystemService(SENSOR_SERVICE);
-			
-	       	DetermineOrientation s = new  DetermineOrientation(mgr,Sensor.TYPE_GRAVITY| Sensor.TYPE_MAGNETIC_FIELD);
 			gyro = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-			/*gyroListener = new GyroscopeListener(c);
-			mgr.registerListener(gyroListener, gyro,
-					SensorManager.SENSOR_DELAY_NORMAL);*/
-			if (c.getConnectionType() == Connection.WIFI_CONNECTION) {
+			/*
+			 * gyroListener = new GyroscopeListener(c);
+			 * mgr.registerListener(gyroListener, gyro,
+			 * SensorManager.SENSOR_DELAY_NORMAL);
+			 */
+			if (conn.getConnectionType() == Connection.WIFI_CONNECTION) {
 				WifiConnection wifiConnection = Connection.getWifiConnection();
 				wifiConnection.setUnReliableMode();
 			}
-			View v = findViewById(R.id.textView1);
+			View v = findViewById(R.id.inputView);
 			v.setOnTouchListener(this);
 
 		} else {
 			Toast.makeText(this, "You are not connected to any server!",
 					Toast.LENGTH_LONG).show();
 		}
-         
-		// Intent intent = getIntent();
-
-		// tv.setText(c.ia.getHostName());
-		// c.sendMessage("selam ben mouse");
 
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_mouse, menu);
+		getMenuInflater().inflate(R.menu.activity_input, menu);
 		return true;
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.keyboard) {
+			((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).
+			toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+	
+	
 
 	int lastX, lastY, x, y, downX, downY;
 	boolean scrolling = false;
@@ -85,7 +98,7 @@ public class MouseActivity extends Activity implements OnTouchListener {
 
 			} else {
 				try {
-					c.sendMessage("MOUSE/RIGHT_CLICK/");
+					conn.sendMessage("MOUSE/RIGHT_CLICK/");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -107,7 +120,7 @@ public class MouseActivity extends Activity implements OnTouchListener {
 					&& Math.abs((int) event.getY() - downY) < 2) {
 
 				try {
-					c.sendMessage("MOUSE/CLICK/");
+					conn.sendMessage("MOUSE/CLICK/");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -127,9 +140,9 @@ public class MouseActivity extends Activity implements OnTouchListener {
 			} else {
 				factor = (double) ((Math.sqrt(Math.pow(x - lastX, 2)
 						+ Math.pow(y - lastY, 2))) / (time - lasttime));
-				if(factor < 1)
+				if (factor < 1)
 					factor = factor + 1;
-				
+
 				lasttime = System.currentTimeMillis();
 				System.out.println("asdasdsdada  " + factor);
 			}
@@ -138,7 +151,7 @@ public class MouseActivity extends Activity implements OnTouchListener {
 				scrolling = true;
 
 				try {
-					c.sendMessage("MOUSE/SCROLL/" + (y - lastY) + "/");
+					conn.sendMessage("MOUSE/SCROLL/" + (y - lastY) + "/");
 
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -147,8 +160,8 @@ public class MouseActivity extends Activity implements OnTouchListener {
 			} else {
 
 				try {
-					c.sendMessage("MOUSE/" + (int)((x - lastX) * factor)
-							+ "/" + (int)((y - lastY) * factor) + "/");
+					conn.sendMessage("MOUSE/" + (int) ((x - lastX) * factor)
+							+ "/" + (int) ((y - lastY) * factor) + "/");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -174,6 +187,54 @@ public class MouseActivity extends Activity implements OnTouchListener {
 		/*
 		 * if(socket != null) socket.close();
 		 */
+	}
+
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent KEvent) {
+		
+		int keyaction = KEvent.getAction();
+		
+		if (conn != null && conn.isConnected()) {
+
+			if (keyaction == KeyEvent.ACTION_DOWN) {
+				System.out.println("girdi");
+				int keycode = KEvent.getKeyCode();
+
+				if (keycode == KeyEvent.KEYCODE_DEL) {
+					System.out.println("Deleted");
+					try {
+						conn.sendMessage("KEY/" + 8 + "/");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					int keyunicode = KEvent.getUnicodeChar();
+					char character = (char) keyunicode;
+
+					try {
+						conn.sendMessage("KEY/" + keyunicode + "/");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+
+		} else if (keyaction == KeyEvent.ACTION_MULTIPLE) {
+
+			if (conn.isConnected()) {
+				String a = KEvent.getCharacters();
+				char[] as = a.toCharArray();
+
+				try {
+					conn.sendMessage("KEY/" + (int) as[0] + "/");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+		}
+
+		return super.dispatchKeyEvent(KEvent);
 	}
 
 }

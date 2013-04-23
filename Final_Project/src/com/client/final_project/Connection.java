@@ -20,42 +20,38 @@ public abstract class Connection {
 
 	public static Connection getConnection(int connection_type) {
 
-		if (instance == null)
-			if (WIFI_CONNECTION == connection_type)
-				instance = new WifiConnection();
-			else if (BLUETOOTH_CONNECTION == connection_type)
-				instance = new BluetoothConnection();
-			else
-				throw new Error("Wrong Connection Type");
-		
-			 
-
+		if (instance != null && instance.isConnected())
+			instance.close();
+			
+		if (WIFI_CONNECTION == connection_type)
+			instance = new WifiConnection();
+		else if (BLUETOOTH_CONNECTION == connection_type)
+			instance = new BluetoothConnection();
+		else
+			throw new Error("Wrong Connection Type");	 
+			
 		return instance;
 	}
 	public static WifiConnection getWifiConnection() {
 
-		if (instance == null){
-				instance = new WifiConnection();
-				
+		if (instance == null || instance instanceof BluetoothConnection){
+				instance = new WifiConnection();			
 		}
+		
 		if(connectionType == BLUETOOTH_CONNECTION)
 				return null;
 		
-				 
-	
-			return (WifiConnection)instance;
+		return (WifiConnection)instance;
 	}
 	public static BluetoothConnection getBluetoothConnection() {
 
-		if (instance == null){
-				instance = new BluetoothConnection();
-				
+		if (instance == null || instance instanceof WifiConnection){
+				instance = new BluetoothConnection();		
 		}
+		
 		if(connectionType == WIFI_CONNECTION)
 				return null;
 		
-			 
-
 		return (BluetoothConnection)instance;
 	}
 	
@@ -92,9 +88,8 @@ public abstract class Connection {
 		return new BufferedReader(new InputStreamReader(getInputStream()));
 	}
 
-	protected synchronized void  sendMsgOutputStream(String s) throws SocketException, Exception {
-		output.println(s);
-		
+	protected synchronized void sendMsgOutputStream(String s) throws SocketException, Exception {
+		output.println(s);		
 		output.flush();
 		try {
 		//	if (output.checkError() == true)
@@ -135,12 +130,13 @@ public abstract class Connection {
 	class ConnControl implements Runnable {
 
 		String msg = "";
-        
+
 		@Override
 		public void run() {
 			try {
 				while (msg != null || msg.equals("exit")) 
 					msg = input.readLine();
+				
 				setConnected(false);
 				close();
 			} catch (Exception e) {

@@ -226,7 +226,6 @@ public class WifiConnection{
 				}
 				
 				socket.close();
-				MainActivity.isConnected = false;
 				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
