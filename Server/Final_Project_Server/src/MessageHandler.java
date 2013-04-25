@@ -186,11 +186,10 @@ public class MessageHandler {
 	}
 	
 	private void sendFiles(String absolutePath) {
-		RemoteFile file = new RemoteFile(new File(absolutePath));
+		
+		RemoteFile file = new RemoteFile(new File((absolutePath.equals("HOME"))?"C:\\Users\\Arif":absolutePath));
 		
 			Gson gson = new Gson();
-//			oos.writeObject(file);
-//			oos.flush();
 			String jsonStr = gson.toJson(file);
 			
 			try {

@@ -16,5 +16,10 @@
     <string name="title_activity_remotes_list">RemotesListActivity</string>
     <string name="title_activity_keyboard">KeyboardActivity</string>
     <string name="title_activity_system_ops">SystemOpsActivity</string>
+    <string name="back_button_description">Step back</string>
+    <string name="home_button_description">Step back</string>
+    <string name="close_button_description">Step back</string>
+    <string name="file_icon_description">Item icon</string>
+    <string name="title_activity_remote_file_browser">File browser</string>
 
 </resources>

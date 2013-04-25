@@ -1,15 +1,14 @@
 package com.client.final_project;
 
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.SocketException;
-
-import android.util.Log;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.google.gson.Gson;
 
@@ -106,23 +105,31 @@ public abstract class Connection {
 
 	}
 
-	public String readMessage() {
-
-		try {
-			return input.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return null;
-		}
-	}
+//	public String readMessage() {
+//
+//		try {
+//			return input.readLine();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			return null;
+//		}
+//	}
 	
 	private String readBuffer() {
-		String in ;
-		synchronized (Connection.class) {
-			in = inputBuffer.toString();
-			inputBuffer.delete(0, inputBuffer.length());
+		String in;
+		try {
+			while (getInputStream().available() > 0 || inputBuffer.toString().equals(""))
+				synchronized (Connection.class) {
+					Connection.class.wait();	
+				}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		in = inputBuffer.toString();
+		inputBuffer.delete(0, inputBuffer.length());
+		
+		
 		return in;
 	}
 	
@@ -139,10 +146,8 @@ public abstract class Connection {
 		try {
 			sendMessage("sendFile/"+absolutePath);
 			BufferedReader r = getBufferedReader();
-			String jsonStr;
-			while((jsonStr = readBuffer()).equals(""));
-			
-		    Gson gson = new Gson();
+			String jsonStr =  readBuffer();
+			Gson gson = new Gson();
 			file = gson.fromJson(jsonStr, RemoteFile.class);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -161,29 +166,33 @@ public abstract class Connection {
 	}
 
 	class ConnControl implements Runnable {
-
 		String msg = "";
-
+        
 		@Override
 		public void run() {
 			try {
-				char b[] = new char[1024];
-				while (input.read(b) != -1) {
+				byte b[] = new byte[1024];
+				while (getInputStream().read(b) != -1) {
 					msg = new String(b).trim();
 					if (msg == null || msg.equals("exit"))
 						break;
-					synchronized (Connection.class) {
-						inputBuffer = inputBuffer.append(msg);
-					}
-					for (int i = 0; i < b.length; i++)
-						b[i] = 0;
+					   
+					inputBuffer = inputBuffer.append(msg);
+					if (getInputStream().available() <= 0)
+						synchronized (Connection.class) {
+							Connection.class.notify();	
+						}
+						 
+					
+					for (int i = 0; i < b.length; i++) b[i] = 0;
 				}
 				setConnected(false);
 				close();
 			} catch (Exception e) {
+				e.printStackTrace();
 				setConnected(false);
 				close();
-				e.printStackTrace();
+				
 			}
 
 		}

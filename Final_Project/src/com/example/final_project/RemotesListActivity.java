@@ -10,19 +10,20 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.client.final_project.Connection;
 import com.client.final_project.RemoteFile;
 
 public class RemotesListActivity extends ListActivity {
 
-	static final String[] PROGRAMS = new String[] { "Touchpad & Keyboard", 
-			"VLC Media Player", "Presentation", "System","Choose file"};
+	static final String[] PROGRAMS = new String[] { "Touchpad & Keyboard",
+			"VLC Media Player", "Presentation", "System", "Choose file" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//setContentView(R.layout.activity_remotes_list);
+		// setContentView(R.layout.activity_remotes_list);
 
 		setListAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, PROGRAMS));
@@ -34,36 +35,48 @@ public class RemotesListActivity extends ListActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				
+
 				Intent intent = null;
-				
+
 				switch (position) {
 				case 0:
-					intent = new Intent(RemotesListActivity.this, InputActivity.class);
+					intent = new Intent(RemotesListActivity.this,
+							InputActivity.class);
 					break;
 				case 1:
-					intent = new Intent(RemotesListActivity.this, VLCActivity.class);
+					intent = new Intent(RemotesListActivity.this,
+							VLCActivity.class);
 					break;
 				case 2:
-					intent = new Intent(RemotesListActivity.this, PresentationActivity.class);
+					intent = new Intent(RemotesListActivity.this,
+							PresentationActivity.class);
 					break;
 				case 3:
-					intent = new Intent(RemotesListActivity.this, SystemOpsActivity.class);
+					intent = new Intent(RemotesListActivity.this,
+							SystemOpsActivity.class);
 					break;
 				case 4:
-					Connection c = Connection.getConnection();
-					if(c.isConnected()) {
-						RemoteFile file = c.getRemoteFile("C:\\");
-						if(file != null)
-							for(RemoteFile f:file.getSubfiles())
-								Log.v("rf",f.getAbsolutePath());
-					}
+//					Connection c = Connection.getConnection();
+//					if (c.isConnected()) {
+//						RemoteFile file = c.getRemoteFile("C:\\");
+//						if (file != null)
+//							for (RemoteFile f : file.getSubfiles())
+//								Log.v("rf", f.getAbsolutePath());
+//				}
+					intent = new Intent(RemotesListActivity.this,
+							RemoteFileBrowser.class);
+					
+					
 					break;
 				default:
+					if (Connection.getConnection() == null
+							|| !Connection.getConnection().isConnected())
+						Toast.makeText(RemotesListActivity.this,
+								"You are not connected", Toast.LENGTH_SHORT);
 					break;
 				}
-				
-				if(intent != null)
+
+				if (intent != null)
 					startActivity(intent);
 
 			}

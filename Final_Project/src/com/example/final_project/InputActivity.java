@@ -242,7 +242,8 @@ public class InputActivity extends Activity implements OnTouchListener {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-        dor.stop();
+        if(dor != null)
+        	dor.stop();
 
 	}
 }
