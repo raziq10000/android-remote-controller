@@ -79,7 +79,7 @@ public class WifiConnection extends Connection {
 			}
 
 			DatagramSocket socket = new DatagramSocket();
-			DatagramPacket datagrampacket = new DatagramPacket(s.getBytes(),
+			DatagramPacket datagrampacket = new DatagramPacket(s.getBytes("UTF-8"),
 					s.length(), this.socket.getInetAddress(),searchPort);
 			socket.send(datagrampacket);
 
@@ -104,7 +104,7 @@ public class WifiConnection extends Connection {
 
 			InetAddress bcastAddress = getBroadcastAddress(wManager);
 			DatagramPacket bcastPacket = new DatagramPacket(
-					connection_startcode.getBytes(),
+					connection_startcode.getBytes("UTF-8"),
 					connection_startcode.length(), bcastAddress, searchPort);
 			socket.send(bcastPacket);
 			

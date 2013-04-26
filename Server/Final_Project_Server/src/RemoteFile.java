@@ -18,9 +18,10 @@ public class RemoteFile  {
 		if (f.isDirectory()) {
 			isDirectory = true;
 			subfiles = new ArrayList<RemoteFile>();
-			for (File sub : f.listFiles())
-				subfiles.add(new RemoteFile(sub.getName(), sub
-						.getAbsolutePath(), this,sub. isDirectory()));
+			if(f.listFiles() != null )
+				for (File sub : f.listFiles())
+					subfiles.add(new RemoteFile(sub.getName(), sub
+							.getAbsolutePath(), this,sub. isDirectory()));
 		}
 
 		

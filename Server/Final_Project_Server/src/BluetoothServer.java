@@ -6,18 +6,13 @@ import java.io.OutputStream;
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
-import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
-import javax.imageio.spi.ServiceRegistry;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
-
-import com.intel.bluetooth.ServiceRecordsRegistry;
-
+import javax.obex.*;
 
 public class BluetoothServer extends Thread {
-
 	InputStream input;
 	OutputStream output;
 	StreamConnectionNotifier notifier;
@@ -79,34 +74,24 @@ public class BluetoothServer extends Thread {
 				do {
 					for (int i = 0; i < b.length; i++) b[i] = 0;
 	 				input.read(b);
-					s = new String(b);
+					s = new String(b, "UTF-8");
 					s = s.trim();
 					MessageHandler.getInstance().handle(s);
 				} while (!s.equals("exit"));
-				connection.close();
-				connected = false;
+				close();
 			} catch (Exception e) {
 				e.printStackTrace();
-				connected = false;
-				return;
+				close();
 			}
 		}
 	}
 	
 	public void interrupt() {
 		try {
-			if(connection != null) {
-				if(connected) {
-					output.write("exit".getBytes());
-					output.flush();
-					output.close();
-					input.close();
-				}
-				connection.close();
-			}
+			close();
 			if(notifier != null) 
 				notifier.close();
-			connected = false;
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -115,5 +100,22 @@ public class BluetoothServer extends Thread {
 			} catch(Exception e) {}
 		
 		ServerScreen.LOGGER.info("Server stopped...");
+	}
+
+	private void close() {
+		try{	
+			if(connection != null) {
+				if(connected) {
+					output.write("exit".getBytes());
+					output.flush();
+					connection.close();
+				}
+			}
+		}catch (Exception e) {
+				
+		}
+	    connected = false;
+	    ServerScreen.LOGGER.info("Bluetooth client disconected");
+			
 	}
 }

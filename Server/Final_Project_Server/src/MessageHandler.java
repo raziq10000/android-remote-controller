@@ -1,4 +1,5 @@
 import java.awt.AWTException;
+import java.awt.Desktop;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Robot;
@@ -180,20 +181,34 @@ public class MessageHandler {
 				
 		} else if(ss[0].equals("sendFile")){
 			sendFiles(ss[1]);
-		} else
+		} else if(ss[0].equals("openFile"))
+			openFile(ss[1]);
+		else
 			System.out.println(msg);
 
 	}
 	
+	private void openFile(String filePath) {
+		try {
+			Desktop.getDesktop().open(new File(filePath));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 	private void sendFiles(String absolutePath) {
-		
-		RemoteFile file = new RemoteFile(new File((absolutePath.equals("HOME"))?"C:\\Users\\Arif":absolutePath));
-		
-			Gson gson = new Gson();
-			String jsonStr = gson.toJson(file);
-			
 			try {
-				output.write(jsonStr.getBytes());
+				
+				RemoteFile file = new RemoteFile(new File((absolutePath.equals("HOME"))?"C:\\Users\\Arif":absolutePath));
+				
+				Gson gson = new Gson();
+				String jsonStr = gson.toJson(file);
+				output.write("&".getBytes());
+				output.write(jsonStr.getBytes("UTF-8"));
+				output.write("?".getBytes());
+				output.flush();
 				ServerScreen.LOGGER.info("File whose  path is " + absolutePath + " send");
 			} catch (IOException e) {
 				ServerScreen.LOGGER.info("File whose  path is " + absolutePath + " fail");

@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 
 public abstract class Connection {
@@ -96,13 +98,6 @@ public abstract class Connection {
 	protected synchronized void sendMsgOutputStream(String s) throws SocketException, Exception {
 		output.println(s);		
 		output.flush();
-		try {
-		//	if (output.checkError() == true)
-		//		close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 //	public String readMessage() {
@@ -119,14 +114,15 @@ public abstract class Connection {
 	private String readBuffer() {
 		String in;
 		try {
-			while (getInputStream().available() > 0 || inputBuffer.toString().equals(""))
-				synchronized (Connection.class) {
-					Connection.class.wait();	
-				}
+			synchronized (read) {
+				while (!read.get()  || inputBuffer.toString().equals(""))	
+					read.wait();	
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		in = inputBuffer.toString();
+		Log.v("JSON s",in);
 		inputBuffer.delete(0, inputBuffer.length());
 		
 		
@@ -145,7 +141,6 @@ public abstract class Connection {
 		RemoteFile file = null;
 		try {
 			sendMessage("sendFile/"+absolutePath);
-			BufferedReader r = getBufferedReader();
 			String jsonStr =  readBuffer();
 			Gson gson = new Gson();
 			file = gson.fromJson(jsonStr, RemoteFile.class);
@@ -164,35 +159,48 @@ public abstract class Connection {
 	protected void conControlRun() {
 		new Thread(new ConnControl()).start();
 	}
-
+	private  AtomicBoolean read =new AtomicBoolean(true) ;
 	class ConnControl implements Runnable {
 		String msg = "";
-        
+		
 		@Override
 		public void run() {
+
 			try {
 				byte b[] = new byte[1024];
-				while (getInputStream().read(b) != -1) {
-					msg = new String(b).trim();
+				while (true) {
+					getInputStream().read(b);
+					msg = new String(b, "UTF-8").trim();
+
 					if (msg == null || msg.equals("exit"))
 						break;
-					   
-					inputBuffer = inputBuffer.append(msg);
-					if (getInputStream().available() <= 0)
-						synchronized (Connection.class) {
-							Connection.class.notify();	
+					Log.v("input message", msg);
+					boolean start = msg.indexOf("&") == 0;
+					boolean finish = msg.indexOf("?") == msg.length() - 1;
+					msg = msg.replace("&", "").replace("?", "");
+					synchronized (read) {
+						    if(start)
+								read.set(false);
+							inputBuffer = inputBuffer.append(msg);
+							if(finish) {
+								read.set(!read.get());
+								read.notify();
+							}
 						}
-						 
-					
 					for (int i = 0; i < b.length; i++) b[i] = 0;
 				}
+				if(!read.get()){ 
+					read.set(true);
+					read.notify();
+				}
+				Log.v("Client","close connection");
 				setConnected(false);
 				close();
 			} catch (Exception e) {
 				e.printStackTrace();
 				setConnected(false);
 				close();
-				
+
 			}
 
 		}

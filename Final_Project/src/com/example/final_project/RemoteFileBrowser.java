@@ -1,12 +1,9 @@
 package com.example.final_project;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,18 +22,16 @@ import android.widget.ViewSwitcher;
 import com.client.final_project.Connection;
 import com.client.final_project.RemoteFile;
 
-
 public class RemoteFileBrowser extends Activity {
 
-	
 	public static final String TAG = RemoteFileBrowser.class.getSimpleName();
 	public static final String START_PATH = "start_path";
-
+	boolean errorMsg = false;
 	// If you want to access system folders(for example on rooted device) change
 	// HOME constant;
-	private static  RemoteFile HOME;
+	private static RemoteFile HOME;
 	private RemoteFile mPath;
-	private ArrayList<RemoteFile>  mBacklist;
+	private ArrayList<RemoteFile> mBacklist;
 	private LoaderListener mLoderListener = new LoaderListener();
 	private FileListAdapter mAdapter;
 	private TextView mPathText;
@@ -44,18 +39,18 @@ public class RemoteFileBrowser extends Activity {
 	private ImageButton mHomeBtn;
 	private ImageButton mCloseBtn;
 	private ViewSwitcher mViewSwitcher;
-	
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.filechooser_activity_file_chooser);
-		
-		if(Connection.getConnection() == null  || !Connection.getConnection().isConnected()) {
-			Toast.makeText(this, "Not Connected", Toast.LENGTH_SHORT);
-			finish();
+
+		if (Connection.getConnection() == null
+				|| !Connection.getConnection().isConnected()) {
+			error();
 		}
-		if(HOME == null)
-		 HOME = Connection.getConnection().getRemoteFile("HOME");
+		if (HOME == null)
+			HOME = Connection.getConnection().getRemoteFile("HOME");
 
 		if (null != getIntent().getExtras()) {
 			String path = getIntent().getExtras().getString(START_PATH);
@@ -71,29 +66,28 @@ public class RemoteFileBrowser extends Activity {
 			}
 		}
 
-		
-		if(mPath == null)
+		if (mPath == null)
 			mPath = HOME;
-		
+
 		mBacklist = new ArrayList<RemoteFile>();
-		
+
 		mCloseBtn = (ImageButton) findViewById(R.id.close_button);
 		mCloseBtn.setOnClickListener(new CloseListener());
 		mBackBtn = (ImageButton) findViewById(R.id.back_button);
 		mBackBtn.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				mPath = mBacklist.remove(mBacklist.size() - 1);
 				load();
 			}
 		});
-		
+
 		mViewSwitcher = (ViewSwitcher) findViewById(R.id.view_switcher);
 		mPathText = (TextView) findViewById(R.id.path);
 		mHomeBtn = (ImageButton) findViewById(R.id.home_button);
 		mHomeBtn.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				mBacklist.add(mPath);
@@ -101,7 +95,7 @@ public class RemoteFileBrowser extends Activity {
 				load();
 			}
 		});
-		
+
 		ListView list = (ListView) findViewById(R.id.list);
 		mAdapter = new FileListAdapter(getApplicationContext());
 		list.setAdapter(mAdapter);
@@ -109,7 +103,7 @@ public class RemoteFileBrowser extends Activity {
 
 		load();
 	}
-	
+
 	@Override
 	public void onBackPressed() {
 		if (mBacklist.size() != 0) {
@@ -126,10 +120,7 @@ public class RemoteFileBrowser extends Activity {
 		outState.putString(START_PATH, mPath.getAbsolutePath());
 		super.onSaveInstanceState(outState);
 	}
-	
 
-
-	
 	private class CloseListener implements View.OnClickListener {
 
 		@Override
@@ -140,42 +131,73 @@ public class RemoteFileBrowser extends Activity {
 		}
 
 	}
-	
-	
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if (errorMsg)
+			Toast.makeText(RemoteFileBrowser.this,
+					"Server is not connected or connection lost",
+					Toast.LENGTH_LONG).show();
+
+	}
+
 	private class SelectionListener implements OnItemClickListener {
 
 		@Override
-		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
 			mBacklist.add(mPath);
 			mPath = (RemoteFile) mAdapter.getItem(position);
-			
+
 			if (mPath.isDirectory()) {
 				load();
 			} else {
-				Intent data = new Intent();
-				// this code going to change
-				data.setData(Uri.parse(mPath.getAbsolutePath()));
-				setResult(Activity.RESULT_OK, data);
-				finish();
+
+				try {
+					Connection c = Connection.getConnection();
+					if (c != null && c.isConnected())
+						Connection.getConnection().sendMessage(
+								"openFile/" + mPath.getAbsolutePath());
+					else {
+						error();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				// Intent data = new Intent();
+				// // this code going to change
+				// data.setData(Uri.parse(mPath.getAbsolutePath()));
+				// setResult(Activity.RESULT_OK, data);
+				// finish();
 			}
 		}
 	}
-	
-	
+
 	private void load() {
 		new PathLoader(mLoderListener).execute(mPath);
-}
-	
-	private class LoaderListener  {
-		
+	}
+
+	private void error() {
+		errorMsg = true;
+		finish();
+	}
+
+	private class LoaderListener {
+
 		public void onLoading() {
 			mViewSwitcher.showNext();
 		}
 
-		
 		public void onPathLoaded(List<RemoteFile> files) {
+			Log.v("RemoteFileBrowser", "pathLoad");
+			if (files == null) {
+				error();
+				return;
+			}
 			mAdapter.setObjects(files);
 			mPathText.setText(mPath.getAbsolutePath());
+			mPath.setSubfiles(new ArrayList<RemoteFile>(files));
 			if (mPath.equals(HOME)) {
 				mBackBtn.setEnabled(false);
 				mHomeBtn.setEnabled(false);
@@ -188,14 +210,14 @@ public class RemoteFileBrowser extends Activity {
 		}
 
 	}
-	
-	
-	private static class PathLoader extends AsyncTask<RemoteFile, Void, List<RemoteFile>> {
+
+	private static class PathLoader extends
+			AsyncTask<RemoteFile, Void, List<RemoteFile>> {
 
 		private LoaderListener mListener;
 
 		public PathLoader(LoaderListener listener) {
-		      this.mListener = listener;	
+			this.mListener = listener;
 		}
 
 		@Override
@@ -213,13 +235,12 @@ public class RemoteFileBrowser extends Activity {
 			}
 
 			Connection c = Connection.getConnection();
-			if(c != null && c.isConnected() && !params[0].isIntiliazed()) 
-				 params[0].setSubfiles(c.getRemoteFile(params[0].getAbsolutePath()).getSubfiles());
-				 
-			result = params[0].getSubfiles();
-			
-				
-			return result;
+			if (c != null && c.isConnected() && !params[0].isIntiliazed())
+				params[0] = c.getRemoteFile(params[0].getAbsolutePath());
+			if (params[0] != null)
+				return params[0].getSubfiles();
+			else
+				return null;
 		}
 
 		@Override
