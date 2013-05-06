@@ -2,7 +2,6 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
@@ -10,7 +9,6 @@ import javax.bluetooth.UUID;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
-import javax.obex.*;
 
 public class BluetoothServer extends Thread {
 	InputStream input;

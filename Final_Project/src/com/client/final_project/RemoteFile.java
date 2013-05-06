@@ -1,12 +1,10 @@
 package com.client.final_project;
 
-
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class RemoteFile  {
+public class RemoteFile {
 	private String name, absolutepath;
 	private ArrayList<RemoteFile> subfiles;
 	private boolean isDirectory;
@@ -14,19 +12,20 @@ public class RemoteFile  {
 	public RemoteFile(File f) {
 		this.name = f.getName();
 		this.absolutepath = f.getAbsolutePath();
-		
+
 		if (f.isDirectory()) {
 			isDirectory = true;
 			subfiles = new ArrayList<RemoteFile>();
-			for (File sub : f.listFiles())
-				subfiles.add(new RemoteFile(sub.getName(), sub
-						.getAbsolutePath(), this,sub. isDirectory()));
+			if (f.listFiles() != null)
+				for (File sub : f.listFiles())
+					subfiles.add(new RemoteFile(sub.getName(), sub
+							.getAbsolutePath(), this, sub.isDirectory()));
 		}
 
-		
 	}
 
-	private RemoteFile(String name, String absolutePath, RemoteFile back,boolean isDirectory) {
+	private RemoteFile(String name, String absolutePath, RemoteFile back,
+			boolean isDirectory) {
 		this.name = name;
 		this.absolutepath = absolutePath;
 		this.isDirectory = isDirectory;
@@ -39,7 +38,7 @@ public class RemoteFile  {
 	public boolean isDirectory() {
 		return isDirectory;
 	}
-	
+
 	public boolean isFile() {
 		return !isDirectory;
 	}
@@ -63,9 +62,5 @@ public class RemoteFile  {
 	public void setSubfiles(ArrayList<RemoteFile> subfiles) {
 		this.subfiles = subfiles;
 	}
-	
-	
-
-	
 
 }

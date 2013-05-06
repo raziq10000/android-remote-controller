@@ -10,6 +10,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +30,9 @@ public class PresentationActivity extends Activity {
 	private Button finishBt;
 	private Connection conn;
 	private Context context = this;
+	private SensorManager mgr;
+	private Sensor gyro , acc;
+	private DetermineMovement dor;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,11 @@ public class PresentationActivity extends Activity {
 		finishBt = (Button) findViewById(R.id.finishBt);
 
 		if (conn != null && conn.isConnected()) {
+			
+			mgr = (SensorManager) this.getSystemService(SENSOR_SERVICE);
+			gyro = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+			dor = new DetermineMovement();
+			acc = mgr.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);			mgr.registerListener(dor,acc,SensorManager.SENSOR_DELAY_NORMAL);
 			
 			startBt.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View paramAnonymousView) {
@@ -167,6 +177,25 @@ public class PresentationActivity extends Activity {
 		}
 
 		return super.onOptionsItemSelected(item);
+	}
+	
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mgr.unregisterListener(dor,acc);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		mgr.registerListener(dor,acc,SensorManager.SENSOR_DELAY_NORMAL);
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mgr.unregisterListener(dor,acc);
 	}
 
 

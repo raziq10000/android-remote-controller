@@ -44,7 +44,7 @@ public class TcpServer extends Thread{
 		
 				client = server.accept();
 				ServerScreen.LOGGER.info("Client connected " + client.getInetAddress().getHostAddress());
-				in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+				in = new BufferedReader(new InputStreamReader(client.getInputStream(),"UTF-8"));
 				out = new PrintWriter(new OutputStreamWriter(client.getOutputStream()));
 				MessageHandler.getInstance().setInput(client.getInputStream());
 				MessageHandler.getInstance().setOutput(client.getOutputStream());

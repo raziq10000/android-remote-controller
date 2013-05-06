@@ -29,7 +29,7 @@ public class InputActivity extends Activity implements OnTouchListener {
 	private SensorManager mgr;
 	private Sensor gyro;
 	private GyroscopeListener gyroListener;
-	private DetermineOrientation dor;
+	private DetermineMovement dor;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,8 @@ public class InputActivity extends Activity implements OnTouchListener {
 		if (conn != null && conn.isConnected()) {
 			mgr = (SensorManager) this.getSystemService(SENSOR_SERVICE);
 			gyro = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-			dor = new DetermineOrientation(this, Sensor.TYPE_GRAVITY|Sensor.TYPE_MAGNETIC_FIELD);
+			dor = new DetermineMovement();
+			mgr.registerListener(dor, mgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_NORMAL);
 			/*
 			 * gyroListener = new GyroscopeListener(c);
 			 * mgr.registerListener(gyroListener, gyro,
@@ -182,7 +183,7 @@ public class InputActivity extends Activity implements OnTouchListener {
 
 	@Override
 	protected void onPause() {
-		if (gyroListener != null)
+		if (dor != null)
 			mgr.unregisterListener(gyroListener, gyro);
 
 		super.onPause();
@@ -242,8 +243,7 @@ public class InputActivity extends Activity implements OnTouchListener {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-        if(dor != null)
-        	dor.stop();
+		
 
 	}
 }

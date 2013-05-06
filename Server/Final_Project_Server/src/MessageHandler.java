@@ -19,7 +19,7 @@ public class MessageHandler {
 	private static MessageHandler handler = null;
 	private  InputStream input;
 	private  OutputStream output;
-	
+	private String delimeter = "/";
 	
 	public static MessageHandler getInstance() {
 		if (handler == null)
@@ -57,7 +57,7 @@ public class MessageHandler {
 
 	public synchronized void handle(String msg) {
 
-		String[] ss = msg.split("/");
+		String[] ss = msg.split(delimeter);
 		// System.out.println(ss[0] + " " + ss[1] + " " + ss[2]);
 		if (ss[0].equals("MOUSE")) {
 			if (ss[1].equals("CLICK")) {
@@ -201,7 +201,7 @@ public class MessageHandler {
 	private void sendFiles(String absolutePath) {
 			try {
 				
-				RemoteFile file = new RemoteFile(new File((absolutePath.equals("HOME"))?"C:\\Users\\Arif":absolutePath));
+				RemoteFile file = new RemoteFile(new File((absolutePath.equals("HOME"))? System.getProperty("user.home") :absolutePath));
 				
 				Gson gson = new Gson();
 				String jsonStr = gson.toJson(file);
