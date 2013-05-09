@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="fill_parent" android:layout_height="fill_parent"
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout 
+        android:layout_width="fill_parent" 
+        android:layout_height="200dp" 
+        android:orientation="vertical"
+         android:layout_marginTop="64dp" 
+        android:layout_alignParentLeft="true" 
+        android:layout_alignParentTop="true" >
+        
+        <Button 
+            android:id="@+id/wifiBt" 
+            android:background="@drawable/dashboard_bt" 
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent" 
+            android:layout_weight="1"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:text="WIFI" />
+         <Button 
+            android:id="@+id/bluetoothBt" 
+            android:background="@drawable/dashboard_bt"
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent"
+            android:layout_weight="1" 
+            android:layout_marginTop="1dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:text="BLUETOOTH" />
+        
+        
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width="fill_parent" 
+        android:layout_height="100dp" 
+        android:layout_marginBottom="64dp" 
+        android:layout_alignParentLeft="true" 
+        android:layout_alignParentBottom="true" >
+        
+        <Button 
+            android:id="@+id/remotesListBt" 
+            android:background="@drawable/dashboard_bt" 
+            android:layout_width="0dp" 
+            android:layout_height="fill_parent" 
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="3dp" 
+            android:text="REMOTES" 
+            android:layout_weight="1" />
+        
+        <Button 
+            android:id="@+id/exitBt" 
+            android:background="@drawable/dashboard_bt"
+            android:layout_width="0dp" 
+            android:layout_height="fill_parent" 
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="3dp" 
+            android:text="EXIT" 
+            android:layout_weight="1" />
+        
+    </LinearLayout>
+</RelativeLayout>

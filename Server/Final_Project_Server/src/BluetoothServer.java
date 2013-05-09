@@ -1,16 +1,21 @@
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import javax.bluetooth.BluetoothStateException;
 import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.LocalDevice;
+import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.UUID;
+import javax.imageio.spi.ServiceRegistry;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
+import com.intel.bluetooth.ServiceRecordsRegistry;
+
 public class BluetoothServer extends Thread {
+
 	InputStream input;
 	OutputStream output;
 	StreamConnectionNotifier notifier;
@@ -18,9 +23,9 @@ public class BluetoothServer extends Thread {
 	// retrieve the local Bluetooth device object
 	static LocalDevice local = null;
 	boolean connected = false;
-	
+
 	public BluetoothServer() {
-		if(local== null)
+		if (local == null)
 			try {
 				local = LocalDevice.getLocalDevice();
 				local.setDiscoverable(DiscoveryAgent.GIAC);
@@ -42,17 +47,17 @@ public class BluetoothServer extends Thread {
 			String url = "btspp://localhost:" + uuid.toString()
 					+ ";name=RemoteBluetooth";
 			notifier = (StreamConnectionNotifier) Connector.open(url);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
-		
-	
-	// waiting for connection
+
+		// waiting for connection
 		while (true) {
 			try {
-				ServerScreen.LOGGER.info("Bluetooth Server waiting for connection");
+				ServerScreen.LOGGER
+						.info("Bluetooth Server waiting for connection");
 				connection = notifier.acceptAndOpen();
 				ServerScreen.LOGGER.info("Bluetooth connected");
 				connected = true;
@@ -70,50 +75,62 @@ public class BluetoothServer extends Thread {
 				byte b[] = new byte[1024];
 				String s;
 				do {
-					for (int i = 0; i < b.length; i++) b[i] = 0;
-	 				input.read(b);
-					s = new String(b, "UTF-8");
+					for (int i = 0; i < b.length; i++)
+						b[i] = 0;
+					input.read(b);
+					s = new String(b);
 					s = s.trim();
 					MessageHandler.getInstance().handle(s);
 				} while (!s.equals("exit"));
-				close();
+					close();
 			} catch (Exception e) {
 				e.printStackTrace();
 				close();
 			}
 		}
 	}
-	
+
 	public void interrupt() {
 		try {
 			close();
-			if(notifier != null) 
+			if (notifier != null)
 				notifier.close();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
-			 super.interrupt();
-			} catch(Exception e) {}
-		
+			super.interrupt();
+		} catch (Exception e) {
+		}
+
 		ServerScreen.LOGGER.info("Server stopped...");
 	}
 
 	private void close() {
-		try{	
-			if(connection != null) {
-				if(connected) {
+		try {
+			if (connection != null) {
+				if (connected) {
 					output.write("exit".getBytes());
 					output.flush();
 					connection.close();
 				}
 			}
-		}catch (Exception e) {
-				
+		} catch (Exception e) {
+
 		}
-	    connected = false;
-	    ServerScreen.LOGGER.info("Bluetooth client disconected");
-			
+		connected = false;
+		ServerScreen.LOGGER.info("Bluetooth client disconected");
+
+	}
+
+	public static boolean isBluetoothSupported() {
+		try {
+			LocalDevice.getLocalDevice();
+		} catch (BluetoothStateException e) {
+			return false;
+		}
+
+		return true;
 	}
 }

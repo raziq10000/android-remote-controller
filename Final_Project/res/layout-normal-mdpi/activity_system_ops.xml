@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+	    
+    <LinearLayout
+        android:id="@+id/ll_system_ops_1"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="30dp" >
+
+        <Button
+            android:id="@+id/shutdownBt"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/dashboard_bt"
+            android:text="Shut Down" />
+         
+        <Button
+            android:id="@+id/restartBt"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/dashboard_bt" 
+            android:text="Restart" />
+        
+         <Button
+            android:id="@+id/sleepBt"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/dashboard_bt"
+            android:text="Sleep" />
+        
+         <Button
+            android:id="@+id/hibernateBt"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/dashboard_bt"
+            android:text="Hibernate" />
+         
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:layout_marginBottom="30dp" 
+        android:orientation="horizontal"
+        android:layout_below="@id/ll_system_ops_1"
+        android:layout_marginTop="5dp" >
+        
+        
+        <Button
+            android:id="@+id/logoutBt"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:background="@drawable/dashboard_bt"
+            android:text="Log Out" />
+        
+        <Button
+            android:id="@+id/lockBt"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/dashboard_bt"
+            android:text="Lock" />     
+         
+         </LinearLayout>
+    
+
+</RelativeLayout>

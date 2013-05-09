@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.final_project"
+    package="com.arc.client"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -14,60 +14,49 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.final_project.Dashboard"
+            android:name="com.arc.client.Dashboard"
             android:label="@string/title_activity_dashboard" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.final_project.InputActivity"
-            android:label="@string/title_activity_mouse" >
+            android:name="com.arc.client.InputActivity"
+            android:label="@string/title_activity_input" >
         </activity>
         <activity
-            android:name="com.example.final_project.MainActivity"
-            android:label="@string/title_activity_main" >
-        </activity>
-        <activity
-            android:name="com.example.final_project.ScanActivity"
+            android:name="com.arc.client.ScanActivity"
             android:label="@string/title_activity_scan" >
         </activity>
         <activity
-            android:name="com.example.final_project.VLCActivity"
+            android:name="com.arc.client.VLCActivity"
             android:label="@string/title_activity_vlc" >
         </activity>
         <activity
-            android:name="com.example.final_project.PresentationActivity"
-            android:label="@string/title_activity_power_point" >
+            android:name="com.arc.client.PresentationActivity"
+            android:label="@string/title_activity_presentation" >
         </activity>
         <activity
-            android:name="com.example.final_project.RemotesListActivity"
+            android:name="com.arc.client.RemotesListActivity"
             android:label="@string/title_activity_remotes_list" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="android.app.ListActivity" />
         </activity>
         <activity
-            android:name="com.example.final_project.KeyboardActivity"
-            android:label="@string/title_activity_keyboard" >
+            android:name="com.arc.client.PowerStatesActivity"
+            android:label="@string/title_activity_power_states" >
         </activity>
         <activity
-            android:name="com.example.final_project.SystemOpsActivity"
-            android:label="@string/title_activity_system_ops" >
-        </activity>
-        <activity
-            android:name="com.example.final_project.RemoteFileBrowser"
-            android:label="@string/title_activity_remote_file_browser" >
+            android:name="com.arc.client.FileBrowserActivity"
+            android:label="@string/title_activity_file_browser" >
         </activity>
     </application>
 

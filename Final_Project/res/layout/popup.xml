@@ -39,7 +39,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:layout_weight="3"
+            android:layout_weight="2"
             android:hint="e.g. 192.168.1.2" />
 
         <Button
@@ -47,6 +47,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
+            android:layout_marginLeft="2dp"
             android:layout_weight="1"
             android:background="@drawable/dashboard_bt"
             android:text="Connect" />

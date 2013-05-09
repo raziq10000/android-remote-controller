@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+	
+    
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="30dp" >
+
+        <ImageButton
+            android:id="@+id/fullscreenBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/full_screen" />
+
+        <ImageButton
+            android:id="@+id/muteBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/mute" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/linearLayout1"
+        android:layout_marginTop="5dp" >
+
+        <ImageButton
+            android:id="@+id/stopBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/stop" />
+
+        <ImageButton
+            android:id="@+id/playBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/play" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/linearLayout2"
+        android:layout_marginTop="5dp" >
+
+        <ImageButton
+            android:id="@+id/rewindBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/rewind" />
+
+        <ImageButton
+            android:id="@+id/forwardBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1.0"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/forward" />
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/linearLayout3"
+        android:layout_marginTop="5dp" >
+
+        <ImageButton
+            android:id="@+id/previousBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/previous" />
+        
+         <ImageButton
+             android:id="@+id/nextBt"
+             android:layout_width="0dp"
+             android:layout_height="70dp"
+             android:layout_marginLeft="5dp"
+             android:layout_marginRight="10dp"
+             android:layout_weight="1"
+             android:background="@drawable/vlc_bt"
+             android:scaleType="center"
+             android:src="@drawable/next" />
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/linearLayout5"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/linearLayout4"
+        android:layout_marginTop="5dp" >
+
+        <ImageButton
+            android:id="@+id/volumeDownBt"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/vlc_bt"
+            android:scaleType="center"
+            android:src="@drawable/volume_down" />
+        
+         <ImageButton
+             android:id="@+id/volumeUpBt"
+             android:layout_width="0dp"
+             android:layout_height="70dp"
+             android:layout_marginLeft="5dp"
+             android:layout_marginRight="10dp"
+             android:layout_weight="1"
+             android:background="@drawable/vlc_bt"
+             android:scaleType="center"
+             android:src="@drawable/volume_up" />
+
+    </LinearLayout>
+    
+
+    
+
+</RelativeLayout>

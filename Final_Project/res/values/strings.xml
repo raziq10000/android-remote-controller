@@ -1,25 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Final_Project</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">Android Remote Controller</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_activity_mouse">MouseActivity</string>
-    <string name="Mouse_Explain_Message">&quot;Please move only one finger for mouse,More than one finger is reserved &quot;</string>
-    <string name="title_activity_dashboard">Dashboard</string>
+    <string name="title_activity_input">Touchpad &amp; Keyboard</string>
+    <string name="title_activity_dashboard">Android Remote Controller</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_scan">connect server</string>
-    <string name="title_activity_vlc">VLCActivity</string>
-    <string name="title_activity_power_point">PowerPointActivity</string>
+    <string name="title_activity_scan">Servers</string>
+    <string name="title_activity_vlc">VLC Media Player</string>
+    <string name="title_activity_presentation">Presentation</string>
     <string name="alertDialog">Enter slide number : </string>
-    <string name="title_activity_remotes_list">RemotesListActivity</string>
-    <string name="title_activity_keyboard">KeyboardActivity</string>
-    <string name="title_activity_system_ops">SystemOpsActivity</string>
+    <string name="title_activity_remotes_list">Remotes</string>
+    <string name="title_activity_power_states">Power States</string>
     <string name="back_button_description">Step back</string>
+    <string name="parent_button_description">goto parent directory</string>
     <string name="home_button_description">Step back</string>
     <string name="close_button_description">Step back</string>
     <string name="file_icon_description">Item icon</string>
-    <string name="title_activity_remote_file_browser">File browser</string>
+    <string name="title_activity_file_browser">File Browser</string>
 
 </resources>

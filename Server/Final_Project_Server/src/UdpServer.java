@@ -3,59 +3,56 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+public class UdpServer extends Thread {
 
-public class UdpServer extends Thread{
-	
-	public DatagramSocket socket;
+	private DatagramSocket socket;
 	private DatagramPacket packet;
 	private boolean isRunning = false;
-	final String connection_startcode = "a";
-	final String connection_correction = "f";
+	private final String CONNECTION_START_CODE = "/ARC/";
+	private final String CONNECTION_CORRECTION_CODE = "ARC";
 
 	@Override
 	public void run() {
 		isRunning = true;
 		try {
-			
-			
 			socket = new DatagramSocket(7880);
 		} catch (SocketException e1) {
-			// TODO Auto-generated catch block
-			System.out.println("55");
+			e1.printStackTrace();
 		}
-		while(isRunning){
+		while (isRunning) {
 			byte[] buf = new byte[512];
 			packet = new DatagramPacket(buf, buf.length);
 			try {
 				this.socket.receive(packet);
 			} catch (IOException e) {
 				isRunning = false;
-				break
-				;
-				
+				break;
+
 			}
-			
+
 			String msg = new String(packet.getData());
 			msg = msg.trim();
-			
-			if(msg.equals("close")){
+
+			if (msg.equals("close")) {
 				socket.close();
-			}else if(msg.equals(connection_startcode)){
-				
+			} else if (msg.equals(CONNECTION_START_CODE)) {
+
 				try {
-					DatagramPacket dp = new DatagramPacket(connection_correction.getBytes(), connection_correction.length(), packet.getSocketAddress());
-					for (int i = 0; i < 3; i++) 
-						socket.send(dp);	
+					DatagramPacket dp = new DatagramPacket(
+							CONNECTION_CORRECTION_CODE.getBytes(),
+							CONNECTION_CORRECTION_CODE.length(),
+							packet.getSocketAddress());
+					for (int i = 0; i < 3; i++)
+						socket.send(dp);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			}else
+			} else
 				MessageHandler.getInstance().handle(msg);
 		}
-		
-	}
 
+	}
 
 	@Override
 	public void interrupt() {
