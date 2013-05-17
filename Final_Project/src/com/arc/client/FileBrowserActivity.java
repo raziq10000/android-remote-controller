@@ -28,7 +28,6 @@ public class FileBrowserActivity extends Activity {
 
 	public static final String TAG = FileBrowserActivity.class.getSimpleName();
 	public static final String START_PATH = "start_path";
-	boolean errorMsg = false;
 	// If you want to access system folders(for example on rooted device) change
 	// HOME constant;
 	private static RemoteFile HOME;
@@ -122,7 +121,7 @@ public class FileBrowserActivity extends Activity {
 			mCloseBtn.setEnabled(false);
 			mHomeBtn.setEnabled(false);
 			mParentBtn.setEnabled(false);
-			Toast.makeText(this, "You are not connected to any server!",
+			Toast.makeText(this, R.string.not_connected_toast,
 					Toast.LENGTH_SHORT).show();
 		}
 
@@ -165,11 +164,6 @@ public class FileBrowserActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (errorMsg)
-			Toast.makeText(FileBrowserActivity.this,
-					"Server is not connected or connection lost",
-					Toast.LENGTH_LONG).show();
-
 	}
 
 	private class SelectionListener implements OnItemClickListener {
@@ -203,10 +197,6 @@ public class FileBrowserActivity extends Activity {
 	private void load() {
 		new PathLoader(mLoderListener).execute(mPath);
 	}
-
-	/*
-	 * private void error() { errorMsg = true; finish(); }
-	 */
 	
 	private class LoaderListener {
 

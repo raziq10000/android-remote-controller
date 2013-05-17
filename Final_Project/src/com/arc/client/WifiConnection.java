@@ -8,10 +8,9 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
@@ -19,21 +18,18 @@ import android.util.Log;
 public class WifiConnection extends Connection {
 
 		private Socket socket;
-
 		private boolean TCPMode = true;		
-
 		private int connectionPort = AppUtil.TCP_PORT;
 		private static int searchPort = AppUtil.UDP_PORT;
-
 		private WifiManager wManager;
-		private List<InetAddress> networkofNodes = new ArrayList<InetAddress>();
-
-		
+		private Map<InetAddress, String> networkofNodes = new HashMap<InetAddress, String>();
 
 		@Override
 		public void connect(String server) throws Exception {
-			InetAddress ia = InetAddress.getByName(server);
-			socket = new Socket(ia, connectionPort);
+			System.out.println("sasdasd");
+			InetAddress [] ia = InetAddress.getAllByName(server);
+			System.out.println("dddd");
+			socket = new Socket(ia[0], connectionPort);
 			intiliazeStreams();
 			connControlRun();
 			connectionType = WIFI_CONNECTION;
@@ -53,7 +49,6 @@ public class WifiConnection extends Connection {
 					socket.close();
 				setConnected(false);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
      
@@ -93,7 +88,7 @@ public class WifiConnection extends Connection {
 
 			searchSocket.setSoTimeout(TIMEOUT);
 			sendDiscoveryRequest(searchSocket);
-			Log.v("BeaconInit", "Y");
+			Log.v("Discovery", "Y");
 			listenForResponses(searchSocket);
 
 		}
@@ -128,16 +123,17 @@ public class WifiConnection extends Connection {
 							buf.length);
 					socket.receive(recvPacket);
 					String recvedString = new String(recvPacket.getData()).trim();
-					Log.d("Beacon", "Received response " + recvedString);
-					if (recvedString.equals(CONNECTION_CORRECTION_CODE)) {
-						Log.v("Beacon", "S");
-						networkofNodes.add(recvPacket.getAddress());
+					String [] tokens = recvedString.split("/");
+					Log.d("Discovery", "Received response " + recvedString);
+					if (tokens[0].equals(CONNECTION_CORRECTION_CODE)) {
+						Log.v("Discovery", "S");
+						networkofNodes.put(recvPacket.getAddress(),tokens[1]);
 						break;
 					}
 
 				}
 			} catch (SocketTimeoutException e) {
-				Log.d("Beacon", "Receive timed out");
+				Log.d("Discovery", "Receive timed out");
 			}
 		}
 
@@ -145,7 +141,7 @@ public class WifiConnection extends Connection {
 				throws IOException {
 			DhcpInfo myDhcpInfo = wManager.getDhcpInfo();
 			if (myDhcpInfo == null) {
-				System.out.println("Could not get broadcast address");
+				Log.w("Discovery", "Could not get broadcast address");
 				return null;
 			}
 			int broadcast = (myDhcpInfo.ipAddress & myDhcpInfo.netmask)
@@ -165,8 +161,8 @@ public class WifiConnection extends Connection {
 			return wManager;
 		}
 
-		public List<InetAddress> getNetworkofNodes() {
+		public Map<InetAddress, String> getNetworkofNodes() {
 			return networkofNodes;
 		}
-
+		
 	}

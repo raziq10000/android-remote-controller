@@ -8,10 +8,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.SocketException;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import android.content.Context;
 import android.util.Log;
-
 import com.google.gson.Gson;
 
 public abstract class Connection {
@@ -114,7 +111,7 @@ public abstract class Connection {
 			e.printStackTrace();
 		}
 		in = inputBuffer.toString();
-		Log.v("JSON s", in);
+		//Log.v("JSON s", in);
 		inputBuffer.delete(0, inputBuffer.length());
 
 		return in;
@@ -166,6 +163,10 @@ public abstract class Connection {
 					}
 					
 					msg = new String(b, "UTF-8").trim();
+					
+					if(msg.equals("exit") || msg.equals("")) {
+						break;
+					}
 					Log.v("input message", msg);
 					boolean start = msg.indexOf("&") == 0;
 					boolean finish = msg.indexOf("?") == msg.length() - 1;

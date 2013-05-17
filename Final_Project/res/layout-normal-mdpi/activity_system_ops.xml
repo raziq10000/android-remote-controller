@@ -18,7 +18,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/dashboard_bt"
-            android:text="Shut Down" />
+            android:text="@string/shutdown" />
          
         <Button
             android:id="@+id/restartBt"
@@ -28,7 +28,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/dashboard_bt" 
-            android:text="Restart" />
+            android:text="@string/restart" />
         
          <Button
             android:id="@+id/sleepBt"
@@ -38,7 +38,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/dashboard_bt"
-            android:text="Sleep" />
+            android:text="@string/sleep" />
         
          <Button
             android:id="@+id/hibernateBt"
@@ -48,7 +48,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/dashboard_bt"
-            android:text="Hibernate" />
+            android:text="@string/hibernate" />
          
     </LinearLayout>
     
@@ -69,7 +69,7 @@
             android:layout_marginRight="2dp"
             android:layout_weight="1"
             android:background="@drawable/dashboard_bt"
-            android:text="Log Out" />
+            android:text="@string/logoff" />
         
         <Button
             android:id="@+id/lockBt"
@@ -79,7 +79,7 @@
             android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:background="@drawable/dashboard_bt"
-            android:text="Lock" />     
+            android:text="@string/lock" />     
          
          </LinearLayout>
     

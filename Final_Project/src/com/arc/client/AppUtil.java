@@ -6,4 +6,5 @@ public class AppUtil {
 	public static Context CURRENT_CONTEXT = null;
 	public static int TCP_PORT = 7878;
 	public static int UDP_PORT = 7880;
+	public static boolean IS_MOTION_ENABLED = false;
 }

@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-
 import com.google.gson.Gson;
 
 public class MessageHandler {
@@ -71,6 +70,10 @@ public class MessageHandler {
 			} else if (tokens[1].equals("SCROLL")) {
 				robot.mouseWheel(Integer.parseInt(tokens[2]) / 3);
 
+			} else if (tokens[1].equals("DRAG")) {
+				robot.mousePress(InputEvent.BUTTON1_MASK);
+			} else if (tokens[1].equals("FIN_DRAG")) {
+				robot.mouseRelease(InputEvent.BUTTON1_MASK);
 			} else {
 				Point p = MouseInfo.getPointerInfo().getLocation();
 				robot.mouseMove(Integer.parseInt(tokens[1]) + p.x,
@@ -179,8 +182,8 @@ public class MessageHandler {
 			sendFiles(createPath(tokens));
 		} else if (tokens[0].equals("openFile")) {
 			openFile(createPath(tokens));
-		} /*else
-			System.out.println(msg);*/
+		} else
+			System.out.println(msg);
 
 	}
 

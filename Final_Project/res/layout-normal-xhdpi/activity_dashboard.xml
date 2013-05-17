@@ -20,7 +20,7 @@
             android:layout_marginBottom="2dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:text="WIFI" />
+            android:text="@string/wifi" />
          <Button 
             android:id="@+id/bluetoothBt" 
             android:background="@drawable/dashboard_bt"
@@ -30,7 +30,7 @@
             android:layout_marginTop="2dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:text="BLUETOOTH" />
+            android:text="@string/bluetooth" />
         
         
     </LinearLayout>
@@ -49,7 +49,7 @@
             android:layout_height="fill_parent" 
             android:layout_marginRight="1dp"
             android:layout_marginLeft="5dp" 
-            android:text="REMOTES" 
+            android:text="@string/remotes" 
             android:layout_weight="1" />
         
         <Button 
@@ -59,7 +59,7 @@
             android:layout_height="fill_parent" 
             android:layout_marginLeft="3dp"
             android:layout_marginRight="5dp" 
-            android:text="EXIT" 
+            android:text="@string/exit" 
             android:layout_weight="1" />
         
     </LinearLayout>

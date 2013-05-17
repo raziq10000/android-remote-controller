@@ -71,15 +71,22 @@ public class RemoteFile {
 		
 		if(getAbsolutePath().length() <= 3)
 			return null;
+	
 		int index = getAbsolutePath().lastIndexOf("\\",getAbsolutePath().length() -2);
+		
 		if (index == -1)
-			index = getAbsolutePath().lastIndexOf("/",getAbsolutePath().length() -2); ;
+			index = getAbsolutePath().lastIndexOf("/",getAbsolutePath().length() -2); 
+		
 		if (index == -1)
 			return null;
+		
 		absolutepath = getAbsolutePath().substring(0, index + 1);
+		
 		index = absolutepath.lastIndexOf("\\");
+		
 		if (index == -1)
 			index = absolutepath.lastIndexOf("/");
+		
 		name = absolutepath.substring(index + 1, absolutepath.length());
 
 		return new RemoteFile(name, absolutepath, true);

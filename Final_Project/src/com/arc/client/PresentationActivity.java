@@ -40,14 +40,13 @@ public class PresentationActivity extends Activity {
 		finishBt = (Button) findViewById(R.id.finishBt);
 
 		if (conn != null && conn.isConnected()) {
-			
+
 			startBt.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View paramAnonymousView) {
 
 					try {
 						conn.sendMessage("PPT/START/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -59,7 +58,6 @@ public class PresentationActivity extends Activity {
 					try {
 						conn.sendMessage("PPT/NEXT/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -71,7 +69,6 @@ public class PresentationActivity extends Activity {
 					try {
 						conn.sendMessage("PPT/PREVIOUS/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -79,82 +76,84 @@ public class PresentationActivity extends Activity {
 
 			gotoBt.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View paramAnonymousView) {
-					
-						LayoutInflater li = LayoutInflater.from(context);
-						View promptView = li.inflate(R.layout.prompt, null);
 
-						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+					LayoutInflater li = LayoutInflater.from(context);
+					View promptView = li.inflate(R.layout.prompt, null);
 
-						// set prompts.xml to alertdialog builder
-						alertDialogBuilder.setView(promptView);
-						
-						final EditText userInput = (EditText) promptView.findViewById(R.id.slideNo);	
-						
-						// set dialog message
-						alertDialogBuilder
-								.setCancelable(false)
-								.setPositiveButton("OK",
-										new DialogInterface.OnClickListener() {
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												// get user input and set it to
-												// result
-												// edit text
-												try {
-													conn.sendMessage("PPT/GOTO/" + userInput.getText() + "/");
-												} catch (SocketException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												} catch (Exception e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												}
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+							context);
+
+					// set prompts.xml to alertdialog builder
+					alertDialogBuilder.setView(promptView);
+
+					final EditText userInput = (EditText) promptView
+							.findViewById(R.id.slideNo);
+
+					// set dialog message
+					alertDialogBuilder
+							.setCancelable(false)
+							.setPositiveButton("OK",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog, int id) {
+											// get user input and set it to
+											// result
+											// edit text
+											try {
+												conn.sendMessage("PPT/GOTO/"
+														+ userInput.getText()
+														+ "/");
+											} catch (SocketException e) {
+												// TODO Auto-generated catch
+												// block
+												e.printStackTrace();
+											} catch (Exception e) {
+												// TODO Auto-generated catch
+												// block
+												e.printStackTrace();
 											}
-										})
-								.setNegativeButton("Cancel",
-										new DialogInterface.OnClickListener() {
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												dialog.cancel();
-											}
-										});
+										}
+									})
+							.setNegativeButton("Cancel",
+									new DialogInterface.OnClickListener() {
+										public void onClick(
+												DialogInterface dialog, int id) {
+											dialog.cancel();
+										}
+									});
 
-						// create alert dialog
-						AlertDialog alertDialog = alertDialogBuilder.create();
+					// create alert dialog
+					AlertDialog alertDialog = alertDialogBuilder.create();
 
-						// show it
-						alertDialog.show();
-						
-					
+					// show it
+					alertDialog.show();
+
 				}
 			});
-			
+
 			finishBt.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View paramAnonymousView) {
 
 					try {
 						conn.sendMessage("PPT/FINISH/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			});
 
 		} else {
-			Toast.makeText(this, "You are not connected to any server!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.not_connected_toast,
+					Toast.LENGTH_SHORT).show();
 		}
 
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 		AppUtil.CURRENT_CONTEXT = this;
 	}
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -162,17 +161,15 @@ public class PresentationActivity extends Activity {
 		getMenuInflater().inflate(R.menu.menu1, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.touchpad) {
-			Intent mouseIntent = new Intent(this,
-					InputActivity.class);
+			Intent mouseIntent = new Intent(this, InputActivity.class);
 			startActivity(mouseIntent);
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
-
 
 }

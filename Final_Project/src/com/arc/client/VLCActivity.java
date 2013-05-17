@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.arc.sensorListeners.DirectionListener;
 import com.arc.sensorListeners.ShakeListener;
 import com.arc.sensorListeners.UpDownListener;
 
@@ -28,6 +29,7 @@ public class VLCActivity extends Activity {
 	private SensorManager mgr;
 	private ShakeListener shakeListener;
 	private UpDownListener upDownListener;
+	private DirectionListener directionListener;
 	private Connection conn;
 
 	protected void onCreate(Bundle paramBundle) {
@@ -35,7 +37,6 @@ public class VLCActivity extends Activity {
 		setContentView(R.layout.activity_vlc);
 		AppUtil.CURRENT_CONTEXT = this;
 		conn = Connection.getConnection();
-
 		mgr = (SensorManager) getSystemService(SENSOR_SERVICE);
 		this.playBt = ((ImageButton) findViewById(R.id.playBt));
 		this.rewindBt = ((ImageButton) findViewById(R.id.rewindBt));
@@ -51,6 +52,8 @@ public class VLCActivity extends Activity {
 		if (conn != null && conn.isConnected()) {
 
 			shakeListener = new ShakeListener(conn);
+			upDownListener = new UpDownListener(conn);
+			directionListener = new DirectionListener(conn);
 
 			this.playBt.setOnClickListener(new View.OnClickListener() {
 				public void onClick(View paramAnonymousView) {
@@ -70,7 +73,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/REWIND/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -82,7 +84,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/FORWARD/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -94,7 +95,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/STOP/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -106,7 +106,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/PREVIOUS/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -118,7 +117,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/NEXT/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -130,7 +128,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/FULLSCREEN/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -142,7 +139,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/MUTE/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -154,7 +150,6 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/VOLUMEDOWN/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -166,31 +161,47 @@ public class VLCActivity extends Activity {
 					try {
 						conn.sendMessage("VLC/VOLUMEUP/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
 			});
 		} else {
-			Toast.makeText(this, "You are not connected to any server!",
+			Toast.makeText(this, R.string.not_connected_toast ,
 					Toast.LENGTH_SHORT).show();
 		}
-
+		
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		disableMotionControl();
+		
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		AppUtil.CURRENT_CONTEXT = this;
-		enableMotionControl();
+		if(AppUtil.IS_MOTION_ENABLED){
+			enableMotionControl();
+		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		AppUtil.IS_MOTION_ENABLED = false;
+	}
+	
+	
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {		
+		return super.onPrepareOptionsMenu(menu);
 	}
 
+	@Override
 	public boolean onCreateOptionsMenu(Menu paramMenu) {
 		getMenuInflater().inflate(R.menu.vlc_menu, paramMenu);
 		return true;
@@ -208,13 +219,15 @@ public class VLCActivity extends Activity {
 			item.setChecked(!item.isChecked());
 			if(item.isChecked()){
 				item.setTitle("Disable Motion Control");
+				AppUtil.IS_MOTION_ENABLED = true;
 				enableMotionControl();
 			}else {
 				item.setTitle("Enable Motion Control");
+				AppUtil.IS_MOTION_ENABLED = false;
 				disableMotionControl();
 			}
 			
-			break;
+	 		break;
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -227,6 +240,10 @@ public class VLCActivity extends Activity {
 		mgr.registerListener(upDownListener,
 				mgr.getDefaultSensor(Sensor.TYPE_GRAVITY),
 				SensorManager.SENSOR_DELAY_GAME);
+		
+		mgr.registerListener(directionListener,
+				mgr.getDefaultSensor(Sensor.TYPE_GRAVITY ),
+				SensorManager.SENSOR_DELAY_GAME);
 	}
 	
 	private void disableMotionControl(){
@@ -235,6 +252,9 @@ public class VLCActivity extends Activity {
 		}
 		if(upDownListener != null){
 			mgr.unregisterListener(upDownListener);
+		}
+		if(directionListener != null){
+			mgr.unregisterListener(directionListener);
 		}
 	}
 

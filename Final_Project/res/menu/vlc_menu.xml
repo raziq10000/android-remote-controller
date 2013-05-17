@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/touchpad"
+        android:orderInCategory="100"
+        android:title="Touch Pad"/>
+    
+    <item
+        android:id="@+id/motion"
+        android:orderInCategory="100"
+        android:title="Enable Motion Control"
+        android:checkable="true" />
+
+</menu>

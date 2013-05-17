@@ -17,7 +17,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/presentation_bt"
-            android:text="Start Slide Show" />
+            android:text="@string/start_ss" />
          
         <Button
             android:id="@+id/nextBt"
@@ -27,7 +27,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/presentation_bt"
-            android:text="Next" />
+            android:text="@string/next" />
         
         <Button
             android:id="@+id/previousBt"
@@ -37,7 +37,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/presentation_bt"
-            android:text="Previous" />
+            android:text="@string/previous" />
         
         <Button
             android:id="@+id/gotoBt"
@@ -47,7 +47,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/presentation_bt"
-            android:text="Go to Slide" />     
+            android:text="@string/go_to_slide" />     
          
           <Button
             android:id="@+id/finishBt"
@@ -57,7 +57,7 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/presentation_bt"
-            android:text="Finish Slide Show" />
+            android:text="@string/finish_ss" />
     </LinearLayout>
     
 

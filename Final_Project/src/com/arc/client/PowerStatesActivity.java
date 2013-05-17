@@ -2,7 +2,6 @@ package com.arc.client;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -40,7 +39,6 @@ public class PowerStatesActivity extends Activity {
 					try {
 						conn.sendMessage("SYS/SHUTDOWN/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -52,7 +50,6 @@ public class PowerStatesActivity extends Activity {
 					try {
 						conn.sendMessage("SYS/RESTART/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -64,7 +61,6 @@ public class PowerStatesActivity extends Activity {
 					try {
 						conn.sendMessage("SYS/LOGOUT/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -76,7 +72,6 @@ public class PowerStatesActivity extends Activity {
 					try {
 						conn.sendMessage("SYS/LOCK/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -88,7 +83,6 @@ public class PowerStatesActivity extends Activity {
 					try {
 						conn.sendMessage("SYS/HIBERNATE/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -100,7 +94,6 @@ public class PowerStatesActivity extends Activity {
 					try {
 						conn.sendMessage("SYS/SLEEP/");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -108,7 +101,7 @@ public class PowerStatesActivity extends Activity {
 			
 
 		} else {
-			Toast.makeText(this, "You are not connected to any server!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, R.string.not_connected_toast, Toast.LENGTH_SHORT).show();
 		}
 		
 	}

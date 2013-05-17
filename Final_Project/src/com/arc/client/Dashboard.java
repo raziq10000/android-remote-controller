@@ -1,14 +1,16 @@
 package com.arc.client;
 
-import java.net.SocketException;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,45 +34,52 @@ public class Dashboard extends Activity {
 	private Button bltthBt;
 	private Connection conn;
 	public static Handler handler;
+	private PopupWindow popupWindow;
+	private static final String IPADDRESS_PATTERN = 
+				"^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+				"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+				"([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+				"([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_LEFT_ICON);
-		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+				.permitNetwork().build();
 		StrictMode.setThreadPolicy(policy);
+
 		setContentView(R.layout.activity_dashboard);
-		
+
 		AppUtil.CURRENT_CONTEXT = this;
-		getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.ic_launcher);
-		
-		this.wifiBt = (Button)findViewById(R.id.wifiBt);
-	    this.remotesListBt = (Button)findViewById(R.id.remotesListBt);
-	    this.exitBt = (Button)findViewById(R.id.exitBt);
-	    this.bltthBt = (Button)findViewById(R.id.bluetoothBt);
-	    
-	    handler = new Handler() {
+		getWindow().setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
+				R.drawable.ic_launcher);
+
+		this.wifiBt = (Button) findViewById(R.id.wifiBt);
+		this.remotesListBt = (Button) findViewById(R.id.remotesListBt);
+		this.exitBt = (Button) findViewById(R.id.exitBt);
+		this.bltthBt = (Button) findViewById(R.id.bluetoothBt);
+
+		handler = new Handler() {
 
 			@Override
 			public void handleMessage(Message msg) {
-				// TODO Auto-generated method stub
 				super.handleMessage(msg);
-				
+
 				final Context currContext = AppUtil.CURRENT_CONTEXT;
-				AlertDialog alert = new AlertDialog.Builder(currContext).setCancelable(false)
+				AlertDialog alert = new AlertDialog.Builder(currContext)
+						.setCancelable(false)
 						.setPositiveButton("OK",
 								new DialogInterface.OnClickListener() {
-									public void onClick(
-											DialogInterface dialog,
+									public void onClick(DialogInterface dialog,
 											int id) {
-										// get user input and set it to
-										// result
-										// edit text
+
 										dialog.dismiss();
-										if(!currContext.equals(Dashboard.this)){
-											((Activity)currContext).finish();
+										if (!currContext.equals(Dashboard.this)) {
+											((Activity) currContext).finish();
 										}
-										
+
 									}
 								}).create();
 				alert.setMessage("Connection to your server has lost!");
@@ -78,50 +87,57 @@ public class Dashboard extends Activity {
 				alert.setIcon(android.R.drawable.stat_notify_error);
 				alert.show();
 			}
-	    	
-	    };
-	    
-	    wifiBt.setOnClickListener(new OnClickListener() {
-			
+
+		};
+
+		wifiBt.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View arg0) {
-				//Intent intent = new Intent(Dashboard.this, ScanActivity.class);
-				//intent.putExtra("connectionType", Connection.WIFI_CONNECTION);
-				
+				// Intent intent = new Intent(Dashboard.this,
+				// ScanActivity.class);
+				// intent.putExtra("connectionType",
+				// Connection.WIFI_CONNECTION);
 				LayoutInflater layoutInflater = (LayoutInflater) getBaseContext()
 						.getSystemService(LAYOUT_INFLATER_SERVICE);
-				final View popupView = layoutInflater.inflate(R.layout.popup, null, true);
-				final PopupWindow popupWindow = new PopupWindow(popupView,
-						getWindowManager().getDefaultDisplay().getWidth() - 20 , LayoutParams.WRAP_CONTENT, true);
+				final View popupView = layoutInflater.inflate(R.layout.popup,
+						null, true);
+				popupWindow = new PopupWindow(popupView, getWindowManager()
+						.getDefaultDisplay().getWidth() - 20,
+						LayoutParams.WRAP_CONTENT, true);
 
-				
 				popupWindow.setAnimationStyle(android.R.style.Animation_Dialog);
 				popupWindow.setBackgroundDrawable(new BitmapDrawable());
-				
+
 				final EditText ip = (EditText) popupView.findViewById(R.id.ip);
-				final Button connectBt = (Button) popupView.findViewById(R.id.connectBt);
-				final Button searchServerBt = (Button) popupView.findViewById(R.id.searchServerBt);
+				final Button connectBt = (Button) popupView
+						.findViewById(R.id.connectBt);
+				final Button searchServerBt = (Button) popupView
+						.findViewById(R.id.searchServerBt);
 
 				connectBt.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
-						/*if (!isWifiEnabled()) {
-							return;
+						conn = Connection.getWifiConnection();
+		
+						/*if (!isWifiEnabled()) { 
+							return; 
+						}*/
+						 
+						if(conn.isConnected()){
+							conn.close();
 						}
-						*/
-						try {
-							conn = Connection.getWifiConnection();
-							conn.connect(ip.getEditableText().toString());
-							popupWindow.dismiss();
-						} catch (Exception e) {
-							popupWindow.dismiss();
-							Toast.makeText(Dashboard.this,
-									"Connection failed!",
-									Toast.LENGTH_SHORT).show();
-							e.printStackTrace();
+						String serverIP = ip.getEditableText().toString();
+						
+						if(Pattern.matches(IPADDRESS_PATTERN, serverIP)) {
+							new ConnectionTask(Dashboard.this).execute(serverIP);
 						}
-
+						else {
+							Toast.makeText(Dashboard.this, "Please enter valid IP address...", Toast.LENGTH_SHORT).show();
+						}
+						
+						
 					}
 				});
 
@@ -132,55 +148,53 @@ public class Dashboard extends Activity {
 						if (!isWifiEnabled()) {
 							return;
 						}
-						Intent intent = new Intent(Dashboard.this,ScanActivity.class);
-						intent.putExtra("connectionType", Connection.WIFI_CONNECTION);
-						startActivity(intent);	
+						Intent intent = new Intent(Dashboard.this,
+								ScanActivity.class);
+						intent.putExtra("connectionType",
+								Connection.WIFI_CONNECTION);
+						startActivity(intent);
 						popupWindow.dismiss();
 					}
 				});
-				
-				
-					popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);	
-				
-				
+
+				popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
 			}
 		});
-	    
-	    
-	    bltthBt.setOnClickListener(new OnClickListener() {
-			
+
+		bltthBt.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(Dashboard.this, ScanActivity.class);
-				intent.putExtra("connectionType", Connection.BLUETOOTH_CONNECTION);
+				intent.putExtra("connectionType",
+						Connection.BLUETOOTH_CONNECTION);
 				startActivity(intent);
 			}
 		});
-	    
-	    remotesListBt.setOnClickListener(new OnClickListener() {
-			
+
+		remotesListBt.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View arg0) {
-				Intent intent = new Intent(Dashboard.this, RemotesListActivity.class);
-				startActivity(intent);			
+				Intent intent = new Intent(Dashboard.this,
+						RemotesListActivity.class);
+				startActivity(intent);
 			}
 		});
-	    
-	    exitBt.setOnClickListener(new OnClickListener() {
-			
+
+		exitBt.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View arg0) {
 				try {
-					
 					finish();
-					
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
-		
+
 	}
 
 	@Override
@@ -190,14 +204,12 @@ public class Dashboard extends Activity {
 			conn = Connection.getConnection();
 			if (conn != null && conn.isConnected()) {
 				conn.close();
-				conn.setConnected(false);
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
 
 	@Override
 	protected void onResume() {
@@ -214,6 +226,59 @@ public class Dashboard extends Activity {
 			return false;
 		} else {
 			return true;
+		}
+	}
+
+	private class ConnectionTask extends AsyncTask<String, Void, Void> {
+
+		private ProgressDialog pd;
+		private Context mContext;
+
+		public ConnectionTask(Context context) {
+			this.mContext = context;
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pd = ProgressDialog.show(mContext, "", "Connecting...", false);
+		}
+
+		@Override
+		protected Void doInBackground(String... params) {
+			try {
+				conn.connect(params[0]);
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						popupWindow.dismiss();
+
+						Toast.makeText(mContext, R.string.connected_toast,
+								Toast.LENGTH_SHORT).show();
+					}
+				});
+			} catch (Exception e) {
+				pd.dismiss();
+				runOnUiThread(new Runnable() {
+
+					@Override
+					public void run() {
+						Toast.makeText(mContext, R.string.conn_failed_toast,
+								Toast.LENGTH_SHORT).show();
+
+					}
+				});
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			pd.dismiss();
 		}
 	}
 

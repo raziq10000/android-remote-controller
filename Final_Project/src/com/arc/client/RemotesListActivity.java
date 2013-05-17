@@ -3,13 +3,11 @@ package com.arc.client;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class RemotesListActivity extends ListActivity {
 
@@ -52,17 +50,8 @@ public class RemotesListActivity extends ListActivity {
 							PowerStatesActivity.class);
 					break;
 				case 4:
-//					Connection c = Connection.getConnection();
-//					if (c.isConnected()) {
-//						RemoteFile file = c.getRemoteFile("C:\\");
-//						if (file != null)
-//							for (RemoteFile f : file.getSubfiles())
-//								Log.v("rf", f.getAbsolutePath());
-//				}
 					intent = new Intent(RemotesListActivity.this,
-							FileBrowserActivity.class);
-					
-					
+							FileBrowserActivity.class);						
 					break;
 				}
 
@@ -73,8 +62,6 @@ public class RemotesListActivity extends ListActivity {
 		});
 	}
 	
-	
-
 	@Override
 	protected void onResume() {
 		super.onResume();

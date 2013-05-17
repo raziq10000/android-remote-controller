@@ -1,22 +1,25 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.InetAddress;
 
 public class UdpServer extends Thread {
 
 	private DatagramSocket socket;
 	private DatagramPacket packet;
+	private String hostname = "";
 	private boolean isRunning = false;
 	private final String CONNECTION_START_CODE = "/ARC/";
-	private final String CONNECTION_CORRECTION_CODE = "ARC";
+	private final String CONNECTION_CORRECTION_CODE = "ARC/";
 
 	@Override
 	public void run() {
 		isRunning = true;
+		
 		try {
 			socket = new DatagramSocket(7880);
-		} catch (SocketException e1) {
+			hostname = InetAddress.getLocalHost().getHostName();
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 		while (isRunning) {
@@ -39,8 +42,8 @@ public class UdpServer extends Thread {
 
 				try {
 					DatagramPacket dp = new DatagramPacket(
-							CONNECTION_CORRECTION_CODE.getBytes(),
-							CONNECTION_CORRECTION_CODE.length(),
+							(CONNECTION_CORRECTION_CODE + hostname).getBytes(),
+							(CONNECTION_CORRECTION_CODE + hostname).length(),
 							packet.getSocketAddress());
 					for (int i = 0; i < 3; i++)
 						socket.send(dp);

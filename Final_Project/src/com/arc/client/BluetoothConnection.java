@@ -5,21 +5,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothClass;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 
 public class BluetoothConnection extends Connection {
 
-	private final UUID searchUuid = UUID
-			.fromString("00002000-0000-1000-8000-00805F9B34FB");
 	private final UUID connectUuid = UUID
 			.fromString("00002000-0000-1000-8000-00805F9B34FB");
 	private BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-	private BluetoothDevice bluetoothDevice;
 	private BluetoothSocket socket;
 
 	@Override
@@ -27,10 +21,8 @@ public class BluetoothConnection extends Connection {
 		connect(bluetoothAdapter.getRemoteDevice(server));
 	}
 
-	public void connect(BluetoothDevice device) throws IOException {
-
-		this.bluetoothDevice = device;
-		socket = device.createRfcommSocketToServiceRecord(connectUuid);
+	public void connect(BluetoothDevice device) throws IOException {	
+		socket = device.createInsecureRfcommSocketToServiceRecord(connectUuid);
 		socket.connect();
 		if (bluetoothAdapter.isDiscovering())
 			bluetoothAdapter.cancelDiscovery();
@@ -55,7 +47,6 @@ public class BluetoothConnection extends Connection {
 			socket.close();
 			setConnected(false);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -78,23 +69,10 @@ public class BluetoothConnection extends Connection {
 	public boolean startDiscovery() {
 		return bluetoothAdapter.startDiscovery();
 	}
-
-	/*
-	 * public boolean serverConfirm(BluetoothDevice server) { final
-	 * AtomicBoolean isServer = new AtomicBoolean(false); try { socket = server
-	 * .createInsecureRfcommSocketToServiceRecord(searchUuid); socket.connect();
-	 * getWriter().write(connection_startcode);
-	 * 
-	 * Thread t = new Thread(new Runnable() { public void run() { try {
-	 * isServer.set(getBufferedReader().readLine().equals(
-	 * connection_correction)); } catch (IOException e) { // TODO Auto-generated
-	 * catch block e.printStackTrace(); } } }); t.start(); try {
-	 * Thread.sleep(1200); } catch (InterruptedException e) {
-	 * 
-	 * // e.printStackTrace(); } if (t.isAlive()) t.interrupt(); } catch
-	 * (IOException e) { try { socket.close(); } catch (Exception e1) {
-	 * e1.printStackTrace(); } isServer.set(false); } return isServer.get(); }
-	 */
+	
+	public boolean cancelDiscovery() {
+		return bluetoothAdapter.cancelDiscovery();
+	}
 
 	@Override
 	public void sendMessage(String s) throws SocketException, Exception {

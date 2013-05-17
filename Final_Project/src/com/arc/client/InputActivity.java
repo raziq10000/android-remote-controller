@@ -1,9 +1,9 @@
 package com.arc.client;
 
+import java.net.SocketException;
+
 import android.app.Activity;
 import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.KeyEvent;
@@ -15,14 +15,12 @@ import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
-import com.arc.sensorListeners.GyroscopeListener;
-
 public class InputActivity extends Activity implements OnTouchListener {
 
 	private Connection conn;
-	private SensorManager mgr;
+	/*private SensorManager mgr;
 	private Sensor gyro;
-	private GyroscopeListener gyroListener;
+	private GyroscopeListener gyroListener;*/
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,9 +35,9 @@ public class InputActivity extends Activity implements OnTouchListener {
 		conn = Connection.getConnection();
 
 		if (conn != null && conn.isConnected()) {
-			mgr = (SensorManager) this.getSystemService(SENSOR_SERVICE);
+			/*mgr = (SensorManager) this.getSystemService(SENSOR_SERVICE);
 			gyro = mgr.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-			/*
+			
 			 * gyroListener = new GyroscopeListener(c);
 			 * mgr.registerListener(gyroListener, gyro,
 			 * SensorManager.SENSOR_DELAY_NORMAL);
@@ -52,7 +50,7 @@ public class InputActivity extends Activity implements OnTouchListener {
 			v.setOnTouchListener(this);
 
 		} else {
-			Toast.makeText(this, "You are not connected to any server!",
+			Toast.makeText(this, R.string.not_connected_toast,
 					Toast.LENGTH_SHORT).show();
 		}
 
@@ -79,11 +77,15 @@ public class InputActivity extends Activity implements OnTouchListener {
 	boolean scrolling = false;
 	long time, lasttime = -1;
 	double factor;
+	boolean isDragging = false;
+	long firstDown = 0;
 
 	public boolean onTouch(View v, MotionEvent event) {
 
+		//Mouse right click
 		if (event.getActionMasked() == MotionEvent.ACTION_POINTER_UP
 				&& event.getPointerCount() == 2) {
+			//Cancel scrolling
 			if (scrolling) {
 				scrolling = false;
 				if (event.getActionIndex() == 0) {
@@ -99,18 +101,35 @@ public class InputActivity extends Activity implements OnTouchListener {
 				}
 			}
 
-		} else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+		} 
+		//First finger down
+		else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			firstDown = System.currentTimeMillis();
+	
 			downX = lastX = (int) event.getX();
 			downY = lastY = (int) event.getY();
 
 			return true;
 
-		} else if (event.getAction() == MotionEvent.ACTION_POINTER_1_DOWN) {
+		}
+		//Second finger down
+		else if (event.getAction() == MotionEvent.ACTION_POINTER_1_DOWN) {
+			
 			lastX = (int) event.getX();
 			lastY = (int) event.getY();
 			return true;
 
-		} else if (event.getAction() == MotionEvent.ACTION_UP) {
+		}
+		//Mouse left click
+		else if (event.getAction() == MotionEvent.ACTION_UP) {
+			if(isDragging) {
+				try {
+					conn.sendMessage("MOUSE/FIN_DRAG");
+					isDragging = false;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			if (Math.abs((int) event.getX() - downX) < 2
 					&& Math.abs((int) event.getY() - downY) < 2) {
 
@@ -140,7 +159,7 @@ public class InputActivity extends Activity implements OnTouchListener {
 
 				lasttime = System.currentTimeMillis();
 			}
-
+			//Mouse scroll
 			if (event.getPointerCount() == 2) {
 				scrolling = true;
 
@@ -152,35 +171,38 @@ public class InputActivity extends Activity implements OnTouchListener {
 				}
 
 			} else {
-
+				if(firstDown != 0 && time - firstDown > 1000) {
+					try {
+						conn.sendMessage("MOUSE/DRAG");//Activate dragging
+						isDragging = true;
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						firstDown = 0;
+					}
+				}
+				//Mouse move
 				try {
 					conn.sendMessage("MOUSE/" + (int) ((x - lastX) * factor)
 							+ "/" + (int) ((y - lastY) * factor) + "/");
+					firstDown = 0;
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 
 			}
-
 			lastX = x;
 			lastY = y;
-
 			return true;
 		}
-
 		return false;
 	}
 
 	@Override
 	protected void onPause() {
-		if (gyroListener != null)
-			mgr.unregisterListener(gyroListener, gyro);
-
+		/*if (gyroListener != null)
+			mgr.unregisterListener(gyroListener, gyro);*/
 		super.onPause();
-
-		/*
-		 * if(socket != null) socket.close();
-		 */
 	}
 	
 	@Override
